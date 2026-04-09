@@ -3,18 +3,25 @@ PredictPulse — Block 3: Model Training & Evaluation
 =====================================================
 Trains an ensemble model to predict which prediction market
 forecasts are likely to be accurate, with full evaluation.
+
+Metrics reported:
+  - AUC-ROC, F1 (standard classification)
+  - Brier Score (probabilistic accuracy — lower is better)
+  - Calibration Curve (reliability diagram — does 70% really mean 70%?)
+  - Cross-category accuracy breakdown
 """
 
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.model_selection import cross_val_score, StratifiedKFold, cross_val_predict
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
     classification_report, roc_auc_score, precision_recall_curve,
-    average_precision_score, confusion_matrix
+    average_precision_score, confusion_matrix, brier_score_loss
 )
+from sklearn.calibration import calibration_curve, CalibratedClassifierCV
 from sklearn.pipeline import Pipeline
 import warnings
 warnings.filterwarnings("ignore")
@@ -117,16 +124,103 @@ def train_accuracy_model(df, feature_cols):
     print(f"  True Negatives:  {cm[0, 0]:>5}  |  False Positives: {cm[0, 1]:>5}")
     print(f"  False Negatives: {cm[1, 0]:>5}  |  True Positives:  {cm[1, 1]:>5}")
 
+    # ========================================
+    # Brier Score — probabilistic calibration quality
+    # ========================================
+    # Brier Score = mean((predicted_prob - actual_outcome)^2)
+    # Perfect model = 0.0 | No-skill baseline = class_imbalance * (1 - class_imbalance)
+    brier = brier_score_loss(y, y_proba)
+    baseline_brier = y.mean() * (1 - y.mean())
+    brier_skill = 1 - (brier / baseline_brier)
+
+    print(f"\n--- Brier Score (Probabilistic Accuracy) ---")
+    print(f"  Brier Score:          {brier:.4f}  (lower = better, 0.0 = perfect)")
+    print(f"  No-skill baseline:    {baseline_brier:.4f}")
+    print(f"  Brier Skill Score:    {brier_skill:.3f}  (higher = better, 1.0 = perfect)")
+
+    # ========================================
+    # Calibration Curve — "does 70% really mean 70%?"
+    # ========================================
+    # Use cross-validated predictions to avoid overfitting bias
+    cv_proba = cross_val_predict(best_model, X, y, cv=cv, method="predict_proba")[:, 1]
+    fraction_pos, mean_pred = calibration_curve(y, cv_proba, n_bins=8, strategy="quantile")
+
+    print(f"\n--- Calibration Curve (Cross-Validated) ---")
+    print(f"  {'Predicted':>12} {'Actual':>12} {'Gap':>10} {'Status':>10}")
+    print(f"  {'-'*46}")
+    total_gap = 0
+    for pred_p, actual_p in zip(mean_pred, fraction_pos):
+        gap = actual_p - pred_p
+        status = "✓ Calibrated" if abs(gap) < 0.05 else ("↑ Underconfident" if gap > 0 else "↓ Overconfident")
+        print(f"  {pred_p:>12.3f} {actual_p:>12.3f} {gap:>+10.3f} {status:>16}")
+        total_gap += abs(gap)
+    mean_cal_error = total_gap / len(mean_pred)
+    print(f"  Mean Calibration Error: {mean_cal_error:.4f} (0.0 = perfect)")
+
+    # Store calibration data for visualization
+    calibration_data = pd.DataFrame({
+        "mean_predicted_prob": mean_pred,
+        "fraction_of_positives": fraction_pos,
+        "calibration_gap": fraction_pos - mean_pred,
+    })
+
+    # ========================================
+    # Cross-category accuracy breakdown
+    # ========================================
+    print(f"\n--- Accuracy by Category ---")
+    print(f"  {'Category':<18} {'N':>5} {'Accuracy':>10} {'Mean Score':>12} {'Brier':>8}")
+    print(f"  {'-'*55}")
+
+    cat_col = None
+    for col in ["category", "category_clean"]:
+        if col in df.columns:
+            cat_col = col
+            break
+
+    category_stats = {}
+    if cat_col:
+        df_eval = df.copy()
+        df_eval["predicted_proba"] = y_proba
+        df_eval["correct"] = (best_model.predict(X) == y)
+
+        for cat, grp in df_eval.groupby(cat_col):
+            if len(grp) < 5:
+                continue
+            cat_y = grp["prediction_accurate"].values
+            cat_p = grp["predicted_proba"].values
+            cat_brier = brier_score_loss(cat_y, cat_p)
+            category_stats[cat] = {
+                "n": len(grp),
+                "accuracy": grp["correct"].mean(),
+                "mean_score": cat_p.mean(),
+                "brier": cat_brier,
+            }
+            print(f"  {str(cat):<18} {len(grp):>5} {grp['correct'].mean():>10.1%} "
+                  f"{cat_p.mean():>12.3f} {cat_brier:>8.4f}")
+    else:
+        print("  (category column not found — skipping)")
+
     evaluation = {
         "best_model": best_model_name,
         "cv_results": results,
         "feature_importances": importance_df,
         "auc_roc": roc_auc_score(y, y_proba),
         "avg_precision": average_precision_score(y, y_proba),
+        "brier_score": brier,
+        "brier_skill_score": brier_skill,
+        "mean_calibration_error": mean_cal_error,
+        "calibration_data": calibration_data,
+        "category_stats": category_stats,
     }
 
-    print(f"\nFinal AUC-ROC: {evaluation['auc_roc']:.3f}")
-    print(f"Average Precision: {evaluation['avg_precision']:.3f}")
+    print(f"\n{'='*60}")
+    print(f"EVALUATION SUMMARY")
+    print(f"{'='*60}")
+    print(f"  AUC-ROC:             {evaluation['auc_roc']:.4f}")
+    print(f"  Average Precision:   {evaluation['avg_precision']:.4f}")
+    print(f"  Brier Score:         {evaluation['brier_score']:.4f}  (baseline: {baseline_brier:.4f})")
+    print(f"  Brier Skill Score:   {evaluation['brier_skill_score']:.4f}  (0=no skill, 1=perfect)")
+    print(f"  Mean Calib. Error:   {evaluation['mean_calibration_error']:.4f}  (0=perfectly calibrated)")
 
     return best_model, evaluation, importance_df
 
