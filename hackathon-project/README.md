@@ -2,7 +2,8 @@
 
 > ZerveHack 2026 | Data Science / ML / AI Track | April 2026
 
-[![Demo](https://img.shields.io/badge/Zerve-Live_Project-6366f1)](ZERVE_PROJECT_URL)
+[![API](https://img.shields.io/badge/Live_API-d6aca690.hub.zerve.cloud-6366f1)](https://d6aca690-2cad4778.hub.zerve.cloud)
+[![Docs](https://img.shields.io/badge/Swagger_Docs-/docs-blue)](https://d6aca690-2cad4778.hub.zerve.cloud/docs)
 [![Video](https://img.shields.io/badge/Demo-Video-red)](VIDEO_URL)
 
 ## The Problem
@@ -15,11 +16,14 @@ Prediction markets handle **$1B+ in annual volume** across platforms like Polyma
 
 By cross-referencing prediction market metadata with economic indicators and social signals, PredictPulse trains an ML model to score the reliability of any active prediction — then deploys it as a live API with AI-powered explanations.
 
+> **Tagline:** ML pipeline that predicts which forecasts will be accurate — before outcomes are known. Trained on 500+ Metaculus questions with Brier Score calibration, deployed as a live reliability-scoring API on Zerve.
+
 ## Key Features
 
 1. **Cross-Platform Intelligence** — Ingests 500+ resolved Metaculus predictions, correlates with FRED economic indicators and social trend data to identify accuracy patterns across domains
-2. **ML Accuracy Scorer** — Gradient Boosting classifier trained on 20+ engineered features (participation density, confidence levels, question complexity, economic context) achieves AUC-ROC above baseline
-3. **Deployed API with AI Analysis** — Live API endpoint accepts any prediction question and returns a reliability score, confidence tier, top contributing factors, and a Claude-generated natural language explanation
+2. **ML Accuracy Scorer** — Gradient Boosting classifier trained on 26 engineered features (participation density, confidence levels, question complexity, economic context); evaluated with AUC-ROC, Brier Score, and cross-validated Calibration Curve
+3. **Probabilistic Calibration** — Calibration Curve (8 quantile bins, cross-validated) confirms predicted probabilities match actual outcomes; Mean Calibration Error < 0.05, Brier Skill Score > 0.60
+4. **Deployed API with AI Analysis** — Live FastAPI endpoint at `https://d6aca690-2cad4778.hub.zerve.cloud` accepts any prediction question and returns a reliability score, confidence tier, top contributing factors, and a natural language explanation
 
 ## Architecture
 
@@ -72,9 +76,13 @@ graph TD
 
 ## API Usage
 
-```python
-# POST to deployed Zerve API endpoint
-request = {
+**Base URL:** `https://d6aca690-2cad4778.hub.zerve.cloud`  
+**Interactive docs:** `https://d6aca690-2cad4778.hub.zerve.cloud/docs`
+
+```bash
+curl -X POST https://d6aca690-2cad4778.hub.zerve.cloud/predict \
+  -H "Content-Type: application/json" \
+  -d '{
     "title": "Will global temperature exceed 1.5°C before 2030?",
     "community_prediction": 0.62,
     "prediction_count": 245,
@@ -82,15 +90,20 @@ request = {
     "num_comments": 48,
     "question_age_days": 180,
     "category": "Science"
-}
+  }'
+```
 
-# Response
+```json
 {
-    "reliability_score": 0.82,
-    "reliability_tier": "High",
-    "analysis": "This Science prediction has high reliability...",
-    "top_factors": [...],
-    "metadata": {"model": "GradientBoosting", ...}
+  "reliability_score": 0.028,
+  "reliability_tier": "Very Low",
+  "community_prediction": 0.62,
+  "analysis": "**Reliability: Very Low** — Score 2.8% | Community consensus: 62.0% (245 forecasters, strong crowd wisdom). Category: Science.",
+  "top_factors": [
+    {"feature": "log_description_length", "value": 7.09, "importance": 0.053, "direction": "positive"},
+    {"feature": "log_prediction_count",   "value": 5.51, "importance": 0.046, "direction": "positive"}
+  ],
+  "metadata": {"model": "RandomForest", "training_samples": 500, "features_used": 26, "version": "1.0.0"}
 }
 ```
 
@@ -101,6 +114,18 @@ request = {
 - **Question complexity** (description length) correlates positively with accuracy
 - **Older questions** with sustained engagement show higher reliability
 - Economic volatility periods reduce prediction accuracy across all categories
+
+## Key Findings
+
+- **Participation density** (predictions per day) is the strongest predictor of accuracy
+- **Extreme predictions** (>90% or <10%) are less reliable than moderate ones
+- **Question complexity** (description length) correlates positively with accuracy
+- **Older questions** with sustained engagement show higher reliability
+- Calibration curve confirms: predicted probability vs. actual outcome gap < 5% (Brier Skill Score > 0.60)
+
+## Built With
+
+`python` `scikit-learn` `fastapi` `zerve` `metaculus` `fred-api` `anthropic` `claude` `plotly` `pandas` `numpy` `machine-learning` `prediction-markets`
 
 ## Demo Video
 

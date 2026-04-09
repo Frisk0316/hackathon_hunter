@@ -257,8 +257,7 @@ def create_feature_importance_chart(importance_df):
 
     fig.update_layout(
         title=dict(
-            text="What Drives Prediction Accuracy?",
-            subtitle=dict(text="Top 12 features by model importance"),
+            text="What Drives Prediction Accuracy?<br><sup>Top 12 features by model importance</sup>",
             font=dict(size=18),
         ),
         xaxis_title="Feature Importance",
@@ -294,8 +293,7 @@ def create_reliability_scorecard(scored_questions):
 
     fig.update_layout(
         title=dict(
-            text="Current Prediction Reliability Scores",
-            subtitle=dict(text="Green = High confidence | Yellow = Moderate | Red = Low"),
+            text="Current Prediction Reliability Scores<br><sup>Green = High confidence | Yellow = Moderate | Red = Low</sup>",
             font=dict(size=18),
         ),
         xaxis=dict(title="Reliability Score", range=[0, 1.1]),
@@ -312,7 +310,10 @@ def create_reliability_scorecard(scored_questions):
 def create_category_analysis(df_features):
     """Accuracy patterns by prediction category."""
 
-    cat_stats = df_features.groupby("category_clean").agg(
+    # category_clean is created by Block 2; fall back to raw category if missing
+    cat_col = "category_clean" if "category_clean" in df_features.columns else "category"
+
+    cat_stats = df_features.groupby(cat_col).agg(
         mean_accuracy=("accuracy_score", "mean"),
         median_error=("prediction_error", "median"),
         count=("accuracy_score", "count"),
@@ -334,15 +335,14 @@ def create_category_analysis(df_features):
             showscale=True,
             colorbar=dict(title="Accuracy"),
         ),
-        text=cat_stats["category_clean"],
+        text=cat_stats[cat_col],
         textposition="top center",
         textfont=dict(size=10),
     ))
 
     fig.update_layout(
         title=dict(
-            text="Prediction Accuracy by Category",
-            subtitle=dict(text="Bubble size = number of questions | Color = accuracy"),
+            text="Prediction Accuracy by Category<br><sup>Bubble size = number of questions | Color = accuracy</sup>",
             font=dict(size=18),
         ),
         xaxis_title="Average Predictions per Question",
