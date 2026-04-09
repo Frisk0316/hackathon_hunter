@@ -190,6 +190,45 @@ def prepare_open_questions(open_df, feature_cols):
     return df
 
 
+# ═══════════════════════════════════════════════════════════════════════════
+# Bootstrap Guard — generates data if Block 1 was not run first
+# ═══════════════════════════════════════════════════════════════════════════
+if 'resolved_df' not in globals() or resolved_df is None:
+    import os as _os, numpy as _np, pandas as _pd
+    from datetime import datetime as _dt, timedelta as _td
+    print("[Block 2 Bootstrap] Block 1 not detected — generating synthetic data...")
+    _np.random.seed(42); _rng = _np.random.default_rng(42)
+    _CATS = ["Science","Economics","Politics","Technology","Health",
+             "Environment","Sports","Finance","Social","Other"]
+    _CW   = [0.20,0.18,0.16,0.14,0.10,0.08,0.06,0.04,0.02,0.02]
+    _BASE = _dt(2021,1,1)
+    def _bs_make(n, is_resolved):
+        rows = []
+        for i in range(n):
+            ls  = int(_rng.integers(30,730))
+            cre = _BASE + _td(days=int(_rng.integers(0,1000).item()))
+            clo = cre + _td(days=ls)
+            res = clo + _td(days=int(_rng.integers(0,30).item()))
+            np_ = int(_np.clip(_rng.lognormal(3.5,1.2),3,2000))
+            nc  = int(_np.clip(_rng.lognormal(2.0,1.0),0,300))
+            cp  = float(_np.clip(_rng.beta(2,2),0.02,0.98))
+            cat = str(_rng.choice(_CATS,p=_CW))
+            dl  = int(_np.clip(_rng.lognormal(5.5,0.8),100,5000))
+            rv  = (str(1.0 if (cp>0.5)==(_rng.random()<_np.clip(
+                        0.55+0.15*_np.log1p(np_/(ls+1))/5-0.05*abs(cp-0.5)*2,0.3,0.85)) else 0.0)
+                   if is_resolved else None)
+            rows.append({"id":10000+i if is_resolved else 20000+i,
+                         "title":f"Will {cat.lower()} event #{i} occur by {res.year}?",
+                         "created_time":cre.isoformat(),"resolve_time":res.isoformat(),
+                         "close_time":clo.isoformat(),"prediction_count":np_,
+                         "community_prediction":cp,"resolution":rv,
+                         "category":cat,"description_length":dl,"num_comments":nc,
+                         "url":f"https://www.metaculus.com/questions/{i}/"})
+        return _pd.DataFrame(rows)
+    resolved_df, open_df, fred_df = _bs_make(500,True), _bs_make(80,False), None
+    print(f"[Bootstrap] ✓ {len(resolved_df)} resolved + {len(open_df)} open questions ready")
+# ═══════════════════════════════════════════════════════════════════════════
+
 # Run feature engineering
 df_features, feature_cols = engineer_prediction_features(resolved_df, fred_df)
 
