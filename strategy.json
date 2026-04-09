@@ -1,0 +1,27 @@
+{
+  "selected_hackathon": "ZerveHack",
+  "selected_track": "Data Science / ML / AI (Sponsor API Track)",
+  "estimated_win_rate": "6.2% (1st place) / 18.6% (any prize)",
+  "reasoning": "ZerveHack has the highest strategic weight: sponsor API track (★★★★★) means we MUST use Zerve platform, which filters out lazy entries. Judges are Zerve's own founders = we build exactly what showcases their platform best. $10K prize across just 3 positions with ~145 estimated submissions. Judging criteria favor Analytical Depth (35%) and End-to-End Workflow (30%) = deploy as API/app for maximum score. 20-day timeline is comfortable.",
+  "project_idea": {
+    "name": "PredictPulse",
+    "tagline": "AI-powered prediction market intelligence — turning crowd wisdom into actionable accuracy scores",
+    "problem": "Prediction markets handle $1B+ in volume annually, yet 68% of participants lack tools to assess forecast reliability. No existing tool cross-references market data with external signals to predict which forecasts are actually trustworthy.",
+    "solution": "PredictPulse uses the Zerve platform to build an end-to-end data science pipeline that analyzes prediction market accuracy by cross-referencing market metadata with economic indicators and social signals, then deploys an AI-powered API that scores any prediction's reliability.",
+    "tech_stack": ["Zerve AI Platform", "Python", "Claude API (Anthropic)", "Metaculus API", "FRED API", "Google Trends", "scikit-learn", "pandas", "plotly"],
+    "key_features": [
+      "Cross-Platform Intelligence: Ingests prediction data from Metaculus and correlates with FRED economic indicators and Google Trends to identify accuracy patterns",
+      "AI Accuracy Scorer: ML model trained on historical prediction outcomes predicts which current forecasts are likely to be accurate, with Claude-powered natural language explanations",
+      "Deployed API: Live API endpoint that accepts a prediction topic and returns an accuracy analysis with confidence score and reasoning"
+    ],
+    "demo_flow": "User enters a prediction market question → PredictPulse fetches relevant market data → cross-references with economic/social signals → ML model generates accuracy score → Claude produces human-readable analysis explaining why this prediction is likely reliable or unreliable → results returned via API",
+    "pitch_angle": "Judges are Zerve founders who want to see their platform used for genuine, insightful data science. We showcase Zerve's full stack: AI agent for data discovery, notebooks for analysis, and deployment for production API. The narrative focuses on 'turning prediction market noise into signal' with real statistical rigor."
+  },
+  "submission_requirements": {
+    "public_zerve_project_url": "Required - must be error-free and shareable",
+    "text_description": "~300 words covering: question asked, findings, significance",
+    "demo_video": "Under 3 minutes on YouTube/Vimeo",
+    "social_post": "LinkedIn or X with project link, @Zerve tag",
+    "deadline": "April 29, 2026 at 2:00 PM ET"
+  }
+}

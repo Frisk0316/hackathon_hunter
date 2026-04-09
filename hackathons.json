@@ -1,0 +1,166 @@
+[
+  {
+    "name": "Agents Assemble - The Healthcare AI Endgame",
+    "url": "https://agents-assemble.devpost.com/",
+    "platform": "Devpost",
+    "deadline": "2026-05-11",
+    "format": "online",
+    "tracks": ["Healthcare MCP Servers", "Healthcare A2A Agents"],
+    "prizes": {
+      "grand": "$7,500",
+      "second": "$5,000",
+      "third": "$2,500",
+      "honorable_mentions": "$1,000 x 10",
+      "total": "$25,000"
+    },
+    "rules_url": "https://agents-assemble.devpost.com/rules",
+    "ai_tools_allowed": true,
+    "estimated_participants": 2384,
+    "estimated_submissions": 240,
+    "judging_criteria": ["AI Factor (leveraging generative AI)", "Potential Impact (healthcare pain points)", "Feasibility (real-world viability)"],
+    "judges_background": ["VC (Alice Zheng MD MBA)", "Microsoft Research (Josh Mandel MD)", "Mayo Clinic (Joshua Hickey PM)", "Google Vertex AI (Parth Tripathi)", "Cleveland Clinic (Piyush Mathur MD)", "Children's Hospital Philadelphia (Stephon Proctor PhD)"],
+    "sponsor_apis": ["Prompt Opinion Platform", "SHARP Extension Specs", "MCP/A2A Standards", "FHIR Server"],
+    "notes": "Must build on Prompt Opinion platform. Healthcare vertical = low competitor expertise. Judges are VCs + top hospital/tech leaders. Requires MCP server or A2A agent integration."
+  },
+  {
+    "name": "ZerveHack",
+    "url": "https://zervehack.devpost.com/",
+    "platform": "Devpost",
+    "deadline": "2026-04-29",
+    "format": "online",
+    "tracks": ["Data Science / ML / AI (open-ended)"],
+    "prizes": {
+      "grand": "$5,000",
+      "second": "$3,000",
+      "third": "$2,000",
+      "total": "$10,000"
+    },
+    "rules_url": "https://zervehack.devpost.com/rules",
+    "ai_tools_allowed": true,
+    "estimated_participants": 1450,
+    "estimated_submissions": 145,
+    "judging_criteria": ["Analytical Depth (35%)", "End-to-End Workflow (30%)", "Storytelling & Clarity (20%)", "Creativity & Ambition (15%)"],
+    "judges_background": ["Zerve AI Growth/GTM (Zach O'Hagan)", "Zerve AI Co-founder/CPO (Greg Michaelson)"],
+    "sponsor_apis": ["Zerve Platform (required)"],
+    "notes": "Must use Zerve platform. Sponsor API track = highest priority. Data sources: prediction markets, finance, sports, climate, social trends. Bonus for deploying as API/app. Social media post tagging Zerve required."
+  },
+  {
+    "name": "HashKey Chain Horizon Hackathon",
+    "url": "https://dorahacks.io/hackathon/2045",
+    "platform": "DoraHacks",
+    "deadline": "2026-04-23",
+    "format": "hybrid",
+    "tracks": ["DeFi", "PayFi", "AI", "ZKID"],
+    "prizes": {
+      "total": "$40,000 USDT"
+    },
+    "rules_url": "https://dorahacks.io/hackathon/2045/detail",
+    "ai_tools_allowed": true,
+    "estimated_participants": 200,
+    "estimated_submissions": 30,
+    "judging_criteria": ["Technical implementation", "Innovation", "Business viability"],
+    "judges_background": ["Web3/Blockchain industry"],
+    "sponsor_apis": ["HashKey Chain"],
+    "notes": "Registration deadline Apr 15. AI track available. Final pitch at Web3 Festival. $40K USDT prize pool across 4 tracks. Low competition expected in AI track."
+  },
+  {
+    "name": "AlgoFest Hackathon 2026: Battle of the Beasts",
+    "url": "https://algofest-hackathon26.devpost.com/",
+    "platform": "Devpost",
+    "deadline": "2026-04-29",
+    "format": "hybrid",
+    "tracks": ["AI & Machine Learning", "Sustainable Technology", "FinTech Innovations", "HealthTech", "Smart Cities & IoT", "Open Innovation"],
+    "prizes": {
+      "grand": "$2,500",
+      "second": "$1,000",
+      "third": "$500",
+      "theme_prizes": "$100 x 10",
+      "total": "$5,000+"
+    },
+    "rules_url": "https://algofest-hackathon26.devpost.com/rules",
+    "ai_tools_allowed": true,
+    "estimated_participants": 124,
+    "estimated_submissions": 25,
+    "judging_criteria": ["Innovation & Creativity (25%)", "Technical Complexity (25%)", "Practical Impact (20%)", "Design & UX (15%)", "Presentation & Demo (15%)"],
+    "judges_background": ["AlgoFest Jury Board (undisclosed)"],
+    "sponsor_apis": [],
+    "notes": "Very low competition (124 registrations). 6 tracks = submissions spread thin. No specific API required = full flexibility. Best AI/ML track prize available. 48-72 hour format."
+  },
+  {
+    "name": "LUMA Hackathon: Pitch your idea, win $2800!",
+    "url": "https://luma.devpost.com/",
+    "platform": "Devpost",
+    "deadline": "2026-04-26",
+    "format": "online",
+    "tracks": ["Open Ended", "Machine Learning/AI"],
+    "prizes": {
+      "total": "$2,800"
+    },
+    "rules_url": "https://luma.devpost.com/rules",
+    "ai_tools_allowed": true,
+    "estimated_participants": 150,
+    "estimated_submissions": 30,
+    "judging_criteria": ["Unknown - pitch-focused"],
+    "judges_background": ["Unknown"],
+    "sponsor_apis": [],
+    "notes": "Low competition. Pitch-focused format. ML/AI theme. Good backup option."
+  },
+  {
+    "name": "DevNetwork [AI + ML] Hackathon 2026",
+    "url": "https://devnetwork-ai-ml-hack-2026.devpost.com/",
+    "platform": "Devpost",
+    "deadline": "2026-05-28",
+    "format": "hybrid",
+    "tracks": ["Overall Winner", "Perfect Corp Challenge", "Buildkite Challenge", "Hud.io Challenge", "Jellyfish Challenge"],
+    "prizes": {
+      "grand": "Amazon Echo devices + Conference passes",
+      "total": "Non-cash prizes"
+    },
+    "rules_url": "https://devnetwork-ai-ml-hack-2026.devpost.com/rules",
+    "ai_tools_allowed": true,
+    "estimated_participants": 336,
+    "estimated_submissions": 50,
+    "judging_criteria": ["Progress (development momentum)", "Concept (real-world problem)", "Feasibility (business viability)"],
+    "judges_background": ["Geoffrey Domoracki (Founder, DevNetwork)"],
+    "sponsor_apis": ["Perfect Corp", "Buildkite", "Hud.io", "Jellyfish"],
+    "notes": "Non-cash prizes = lower ROI. But sponsor challenge tracks have dedicated prizes TBD. 4 sponsor API tracks = sweet spot per our strategy. Long deadline."
+  },
+  {
+    "name": "TechEx Intelligent Enterprise Solutions Hackathon",
+    "url": "https://lablab.ai/ai-hackathons/techex-intelligent-enterprise-solutions-hackathon",
+    "platform": "Lablab",
+    "deadline": "2026-05-19",
+    "format": "hybrid",
+    "tracks": ["Enterprise AI Solutions"],
+    "prizes": {
+      "total": "TBD (announced at AI & Big Data Expo)"
+    },
+    "rules_url": "https://lablab.ai/ai-hackathons/techex-intelligent-enterprise-solutions-hackathon",
+    "ai_tools_allowed": true,
+    "estimated_participants": 300,
+    "estimated_submissions": 40,
+    "judging_criteria": ["Enterprise readiness", "Innovation", "Impact"],
+    "judges_background": ["AI & Big Data Expo judges"],
+    "sponsor_apis": [],
+    "notes": "Winners announced live at AI & Big Data Expo North America in San Jose. Enterprise vertical = good for business narrative. Prizes TBD."
+  },
+  {
+    "name": "AI Trading Agents with ERC-8004 Hackathon",
+    "url": "https://lablab.ai/ai-hackathons/ai-trading-agents-erc-8004",
+    "platform": "Lablab",
+    "deadline": "2026-04-12",
+    "format": "online",
+    "tracks": ["AI Trading Agents", "ERC-8004 Identity/Reputation"],
+    "prizes": {
+      "total": "$55,000"
+    },
+    "rules_url": "https://lablab.ai/ai-hackathons/ai-trading-agents-erc-8004",
+    "ai_tools_allowed": true,
+    "estimated_participants": 400,
+    "estimated_submissions": 50,
+    "judging_criteria": ["Technical implementation", "Innovation", "Deployability"],
+    "judges_background": ["Surge", "Kraken"],
+    "sponsor_apis": ["ERC-8004", "Kraken CLI", "Surge"],
+    "notes": "WARNING: Deadline April 12 = only 3 days away. Highest prize pool but extremely tight timeline. Requires blockchain/trading knowledge."
+  }
+]
