@@ -3,5 +3,6 @@ pandas
 numpy
 plotly
 scikit-learn
+shap
 anthropic
 requests
