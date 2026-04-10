@@ -173,7 +173,7 @@ def engineer_features(resolved_df, open_df=None):
     return resolved_feat, open_feat, feature_cols
 
 
-def train_model(df, feature_cols):
+def train_model(df, feature_cols, n_bins=8):
     from sklearn.model_selection import StratifiedKFold, cross_val_score, cross_val_predict
     from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
     from sklearn.linear_model import LogisticRegression
@@ -203,7 +203,7 @@ def train_model(df, feature_cols):
     y_proba = model.predict_proba(X)[:, 1]
 
     cv_proba = cross_val_predict(model, X, y, cv=cv, method="predict_proba")[:, 1]
-    frac_pos, mean_pred = calibration_curve(y, cv_proba, n_bins=8, strategy="quantile")
+    frac_pos, mean_pred = calibration_curve(y, cv_proba, n_bins=n_bins, strategy="quantile")
     cal_df = pd.DataFrame({"mean_pred": mean_pred, "frac_pos": frac_pos})
 
     brier = brier_score_loss(y, y_proba)
@@ -313,7 +313,7 @@ with st.sidebar:
     n_bins    = st.slider("Calibration bins", 5, 12, 8)
 
     st.divider()
-    st.subheader("🔑 API Keys (optional)")
+    st.subheader("🔑 API Keys")
     metaculus_token = st.text_input("Metaculus Token", type="password",
                                     help="Get free token at metaculus.com/aib")
     anthropic_key   = st.text_input("Anthropic API Key", type="password",
@@ -331,19 +331,19 @@ with st.sidebar:
 
 # ── Load & Train (cached) ─────────────────────────────────────
 @st.cache_data(ttl=3600, show_spinner=False)
-def run_pipeline(n_samples, _token, _key):
+def run_pipeline(n_samples, n_bins, _token, _key):
     resolved, open_df, source = load_data()
     if len(resolved) > n_samples:
         resolved = resolved.sample(n_samples, random_state=42)
     resolved_feat, open_feat, feature_cols = engineer_features(resolved, open_df)
-    model, metrics, importance_df = train_model(resolved_feat, feature_cols)
+    model, metrics, importance_df = train_model(resolved_feat, feature_cols, n_bins=n_bins)
     scored = score_questions(model, open_feat, feature_cols) if open_feat is not None else None
     return model, metrics, importance_df, scored, open_feat, feature_cols, source
 
 
 with st.spinner("Running PredictPulse pipeline..."):
     model, metrics, importance_df, scored, open_feat, feature_cols, data_source = run_pipeline(
-        n_samples, metaculus_token, anthropic_key)
+        n_samples, n_bins, metaculus_token, anthropic_key)
 
 
 # ── Header ────────────────────────────────────────────────────
