@@ -15,3 +15,5 @@ Codex implemented the local demo architecture inside `projects/uipath-agenthack-
 - Verified `make demo`, `make test`, and `make qa` locally.
 
 Key design decision: keep local execution deterministic by default. Optional Claude rationale enrichment is available through environment variables, but the scored demo does not rely on network access or non-repeatable model output.
+
+Later Codex pass added `VIDEO_SCRIPT.md` and `SUBMISSION_CHECKLIST.md` so the human recording and Devpost submission gates have concrete, reviewable steps without automating final submission.

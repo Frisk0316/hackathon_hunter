@@ -82,3 +82,8 @@ make qa            # run test, lint, and smoke demo
 
 Human cloud setup is still a gate: create the UiPath Automation Cloud account, build the Maestro Case process, configure the human approval task, and record the final video manually.
 
+## Submission Prep
+
+- Use `VIDEO_SCRIPT.md` for the under-5-minute demo recording.
+- Use `SUBMISSION_CHECKLIST.md` before publishing the repo, video, or Devpost entry.
+- Use `SUBMISSION_DRAFT.md` as draft copy only; final submission remains a human gate.

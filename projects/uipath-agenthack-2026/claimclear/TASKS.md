@@ -35,6 +35,7 @@ Human-only steps are tagged **[HUMAN]** — Codex should stop and request them, 
 - [x] Codex: smoke test passes; tests green; lint clean.
 - [x] Codex: finalize `AGENT_BUILD_LOG.md`.
 - [x] Codex: produce `HANDOFF_REPORT.md` (what's done, what's manual, how to run).
+- [x] Codex: produce `VIDEO_SCRIPT.md` and `SUBMISSION_CHECKLIST.md` for human recording/submission.
 - [ ] **[HUMAN]** Record ≤5-min demo video following demo script in SPEC.
 - [ ] **[HUMAN]** Confirm public repo, then submit on Devpost.
 

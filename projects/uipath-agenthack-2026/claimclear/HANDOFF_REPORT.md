@@ -46,11 +46,14 @@ make qa
 - Human creates or confirms UiPath Automation Cloud access.
 - Human builds the Maestro Case process using `docs/UIPATH_SETUP.md`.
 - Human wires the coded agents and human approval task in UiPath cloud.
-- Human records the demo video.
+- Human records the demo video using `VIDEO_SCRIPT.md`.
 - Human confirms public repository visibility.
+- Human checks `SUBMISSION_CHECKLIST.md`.
 - Human submits the final Devpost entry.
 
 ## Demo Script
+
+Use `VIDEO_SCRIPT.md` for the full five-minute recording plan.
 
 1. Run `make demo` locally or submit `CLM-1001` in Maestro.
 2. Show `CLM-1001` auto-approved with audit entries.
