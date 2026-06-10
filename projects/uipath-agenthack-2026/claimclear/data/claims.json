@@ -1,0 +1,63 @@
+[
+  {
+    "claim_id": "CLM-1001",
+    "policy_id": "POL-2001",
+    "claimant_name": "Ava Lin",
+    "claimant_email": "ava.lin@example.invalid",
+    "claim_type": "auto_physical_damage",
+    "amount": 2400,
+    "incident_date": "2026-06-04",
+    "reported_date": "2026-06-05",
+    "loss_location": "Seattle, WA",
+    "narrative": "Minor rear bumper damage after a low-speed parking lot collision. Photos, repair estimate, and police report are attached.",
+    "documents": [
+      "photos",
+      "repair_estimate",
+      "police_report"
+    ],
+    "metadata": {
+      "scenario": "clean_auto_clear",
+      "synthetic": true
+    }
+  },
+  {
+    "claim_id": "CLM-1002",
+    "policy_id": "POL-2002",
+    "claimant_name": "Mateo Chen",
+    "claimant_email": "mateo.chen@example.invalid",
+    "claim_type": "property_water_damage",
+    "amount": 9850,
+    "incident_date": "2026-05-15",
+    "reported_date": "2026-06-06",
+    "loss_location": "Austin, TX",
+    "narrative": "Water damage noticed after returning from travel. The exact source is unclear, the plumber invoice is not attached, and the first estimate changed twice.",
+    "documents": [
+      "photos"
+    ],
+    "metadata": {
+      "scenario": "ambiguous_human_review",
+      "synthetic": true
+    }
+  },
+  {
+    "claim_id": "CLM-1003",
+    "policy_id": "POL-2003",
+    "claimant_name": "Nora Patel",
+    "claimant_email": "nora.patel@example.invalid",
+    "claim_type": "auto_physical_damage",
+    "amount": 6200,
+    "incident_date": "2026-05-20",
+    "reported_date": "2026-05-21",
+    "loss_location": "Denver, CO",
+    "narrative": "Front-end collision with photos and a repair estimate attached.",
+    "documents": [
+      "photos",
+      "repair_estimate"
+    ],
+    "metadata": {
+      "scenario": "policy_exception",
+      "synthetic": true
+    }
+  }
+]
+
