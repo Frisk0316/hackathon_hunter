@@ -6,7 +6,6 @@ from typing import Any
 
 from claimclear.models import Claim, Policy
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 SYNTHETIC_POLICIES: list[dict[str, Any]] = [

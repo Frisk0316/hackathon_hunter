@@ -71,7 +71,7 @@ Claim (form/PDF)
 ## Acceptance criteria
 - One-command local run of the coded-agent + synthetic data demo (`make demo` or documented script).
 - Clean claim auto-approves; ambiguous claim escalates; both produce audit entries.
-- README has Quick Start, Tech Stack, Architecture, **synthetic-data disclosure**, no placeholder tokens (TODO/VIDEO_URL/YOUR_REPO/etc.).
+- README has Quick Start, Tech Stack, Architecture, **synthetic-data disclosure**, and no unresolved scaffold markers.
 - `AGENT_BUILD_LOG.md` documents the Claude→Codex build.
 - `.env.example` present; no secrets committed.
 

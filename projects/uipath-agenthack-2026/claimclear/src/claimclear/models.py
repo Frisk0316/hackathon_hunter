@@ -31,7 +31,7 @@ class Claim:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Claim":
+    def from_dict(cls, data: dict[str, Any]) -> Claim:
         return cls(
             claim_id=str(data["claim_id"]),
             policy_id=str(data["policy_id"]),
@@ -64,7 +64,7 @@ class Policy:
     notes: list[str] = field(default_factory=list)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Policy":
+    def from_dict(cls, data: dict[str, Any]) -> Policy:
         return cls(
             policy_id=str(data["policy_id"]),
             holder_name=str(data["holder_name"]),

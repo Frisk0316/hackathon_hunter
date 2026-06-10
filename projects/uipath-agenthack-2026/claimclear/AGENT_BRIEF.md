@@ -26,7 +26,7 @@ Skeleton+synthetic data → local agent pipeline (intake / policy-check / risk-s
 - `make demo` (or documented script) runs both scenarios end-to-end on synthetic data.
 - Clean claim auto-approves; ambiguous escalates; both write audit entries.
 - `pytest` green; lint clean; smoke test passes.
-- README: Quick Start, Tech Stack, Architecture, **synthetic-data disclosure**, zero placeholder tokens (`TODO`, `TBD`, `VIDEO_URL`, `DEMO_URL`, `YOUR_REPO`, `PLACEHOLDER`).
+- README: Quick Start, Tech Stack, Architecture, **synthetic-data disclosure**, and no unresolved scaffold markers.
 - `.env.example` present; **no real keys/secrets committed.**
 
 ## Bonus (do not skip — free points)
