@@ -31,6 +31,159 @@ DEFAULT_SCORING_SETTINGS: dict[str, float | int] = {
     "evidence_max_age_days": 14,
     "stale_evidence_penalty": 0.7,
 }
+DEFAULT_SCORING_CONSTANTS: dict[str, Any] = {
+    "prize": {
+        # Human-reviewed market anchor. Update when the radar's active prize market shifts.
+        "prize_normalization_usd": 70000,
+        "non_cash_score": 0.10,
+        "unknown_score": 0.25,
+        "base_score": 0.45,
+        "amount_weight": 0.55,
+    },
+    "format": {
+        "online": 1.0,
+        "hybrid": 0.7,
+        "in_person": 0.0,
+        "unknown": 0.25,
+    },
+    "deadline": {
+        "tiers": [
+            {"min_days": 30, "score": 1.0},
+            {"min_days": 21, "score": 0.85},
+            {"min_days": 14, "score": 0.70},
+            {"min_days": 7, "score": 0.45},
+        ],
+        "positive_score": 0.15,
+        "expired_score": 0.0,
+    },
+    "ai_policy": {
+        "allowed": 1.0,
+        "restricted": 0.45,
+        "default": 0.0,
+    },
+    "sponsor_fit": {
+        "required_api_score": 0.9,
+        "sponsor_score": 0.7,
+        "track_keyword_score": 0.55,
+        "default_score": 0.25,
+    },
+    "past_winner": {
+        "known_platforms": ["devpost", "lablab", "dorahacks"],
+        "known_platform_score": 0.70,
+        "default_score": 0.45,
+    },
+    "low_submission_estimate": {
+        "sponsor_or_track_score": 0.65,
+        "high_prize_threshold_usd": 50000,
+        "high_prize_score": 0.45,
+        "default_score": 0.50,
+    },
+    "taiwan_eligibility": {
+        "eligible_score": 1.0,
+        "blocked_score": 0.0,
+        "student_only_score": 0.10,
+        "restricted_uncertain_score": 0.25,
+        "restricted_taiwan_included_score": 0.80,
+        "restricted_default_score": 0.35,
+        "unknown_score": 0.55,
+        "block_threshold": 0.05,
+    },
+    "competition_pressure": {
+        "count_tiers": [
+            {"min_count": 10000, "score": 0.15},
+            {"min_count": 5000, "score": 0.25},
+            {"min_count": 2500, "score": 0.35},
+            {"min_count": 1000, "score": 0.50},
+            {"min_count": 500, "score": 0.65},
+            {"min_count": 100, "score": 0.80},
+        ],
+        "low_count_score": 0.90,
+        "very_high_prize_threshold_usd": 250000,
+        "very_high_prize_score": 0.25,
+        "high_prize_threshold_usd": 70000,
+        "high_prize_score": 0.45,
+        "devpost_default_score": 0.55,
+        "default_score": 0.60,
+    },
+    "submission_complexity": {
+        "base_score": 0.88,
+        "requirement_penalties": {
+            "github_repo": 0.03,
+            "demo_url": 0.06,
+            "video": 0.08,
+            "deck": 0.06,
+            "social_post": 0.04,
+            "public_profile": 0.02,
+            "deploy_proof": 0.10,
+            "architecture_diagram": 0.07,
+        },
+        "required_api_base_penalty": 0.05,
+        "required_api_extra_penalty": 0.02,
+        "required_api_max_penalty": 0.12,
+        "keyword_penalties": {
+            "revenue": 0.12,
+            "expenses": 0.08,
+            "hardware": 0.10,
+            "live presentation": 0.08,
+            "accelerator": 0.04,
+            "deployment proof": 0.08,
+        },
+    },
+    "fast_lane": {
+        "disabled_score": 0.50,
+        "expired_score": 0.0,
+        "complexity_weight": 0.45,
+        "sponsor_fit_weight": 0.25,
+        "format_weight": 0.20,
+        "ai_policy_weight": 0.10,
+        "three_day_threshold": 3,
+        "three_day_penalty": 0.15,
+        "seven_day_threshold": 7,
+        "fourteen_day_threshold": 14,
+        "medium_buffer_base": 0.70,
+        "medium_buffer_weight": 0.20,
+        "default_score": 0.55,
+    },
+    "domain_fit": {
+        "default_domains": ["ai", "agent", "cloud", "voice", "developer"],
+        "base_score": 0.35,
+        "hit_weight": 0.15,
+        "max_hits": 4,
+    },
+    "evidence_quality": {
+        "key_fields": ["deadline", "prize_total_usd", "cash_prize", "eligibility", "required_apis"],
+    },
+    "delivery_risk": {
+        "deadline_tiers": [
+            {"lt_days": 7, "risk": 0.40},
+            {"lt_days": 14, "risk": 0.25},
+            {"lt_days": 21, "risk": 0.12},
+        ],
+        "ai_policy_unknown_or_forbidden": 0.35,
+        "region_restricted": 0.25,
+        "taiwan_gate_threshold": 0.25,
+        "taiwan_gate_risk": 0.20,
+        "evidence_quality_threshold": 0.7,
+        "low_evidence_quality": 0.18,
+        "competition_pressure_threshold": 0.25,
+        "competition_pressure_risk": 0.08,
+        "submission_complexity_threshold": 0.45,
+        "submission_complexity_risk": 0.08,
+        "extra_requirement_risk": 0.04,
+        "overall_risk_weight": 0.10,
+    },
+    "score_dimensions": {
+        "roi_prize_weight": 0.75,
+        "roi_submission_weight": 0.25,
+        "feasibility_deadline_weight": 0.45,
+        "feasibility_format_weight": 0.30,
+        "feasibility_submission_weight": 0.15,
+        "feasibility_risk_weight": 0.10,
+        "strategic_sponsor_weight": 0.45,
+        "strategic_domain_weight": 0.35,
+        "strategic_ai_policy_weight": 0.20,
+    },
+}
 STALE_EVIDENCE_FIELDS = [
     "deadline",
     "eligibility",
@@ -45,12 +198,43 @@ def clamp(value: float) -> float:
     return max(0.0, min(1.0, value))
 
 
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+    for key, value in override.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
 def load_scoring_config(path: str | Path | None = None) -> dict[str, Any]:
     config_path = Path(path) if path else project_path("config", "scoring.yaml")
     if not config_path.exists():
-        return {"weights": DEFAULT_WEIGHTS, **DEFAULT_SCORING_SETTINGS}
+        return {
+            "weights": DEFAULT_WEIGHTS,
+            "constants": DEFAULT_SCORING_CONSTANTS,
+            **DEFAULT_SCORING_SETTINGS,
+        }
     payload = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
-    return {"weights": payload.get("weights", {}), **DEFAULT_SCORING_SETTINGS, **payload}
+    constants = _deep_merge(
+        DEFAULT_SCORING_CONSTANTS,
+        payload.get("constants", {}) or {},
+    )
+    return {
+        "weights": payload.get("weights", {}),
+        "constants": constants,
+        **DEFAULT_SCORING_SETTINGS,
+        **{key: value for key, value in payload.items() if key != "constants"},
+    }
+
+
+def load_scoring_constants(path: str | Path | None = None) -> dict[str, Any]:
+    return load_scoring_config(path).get("constants", DEFAULT_SCORING_CONSTANTS)
+
+
+def _active_constants(constants: dict[str, Any] | None) -> dict[str, Any]:
+    return constants or load_scoring_constants()
 
 
 def load_weights(path: str | Path | None = None) -> dict[str, float]:
@@ -77,77 +261,85 @@ def days_until_deadline(hackathon: Hackathon, now: datetime | None = None) -> fl
     return (hackathon.deadline - checked_at).total_seconds() / 86400
 
 
-def _score_prize(hackathon: Hackathon) -> float:
+def _score_prize(hackathon: Hackathon, constants: dict[str, Any] | None = None) -> float:
+    config = _active_constants(constants)["prize"]
     if hackathon.cash_prize is False:
-        return 0.10
+        return float(config["non_cash_score"])
     if hackathon.cash_prize is None or hackathon.prize_total_usd is None:
-        return 0.25
+        return float(config["unknown_score"])
     amount = max(0.0, hackathon.prize_total_usd)
-    return clamp(0.45 + (amount / 70000) * 0.55)
+    return clamp(
+        float(config["base_score"])
+        + (amount / float(config["prize_normalization_usd"]))
+        * float(config["amount_weight"])
+    )
 
 
-def _score_format(hackathon: Hackathon) -> float:
+def _score_format(hackathon: Hackathon, constants: dict[str, Any] | None = None) -> float:
+    config = _active_constants(constants)["format"]
     normalized = str(hackathon.format).lower()
-    if normalized == "online":
-        return 1.0
-    if normalized == "hybrid":
-        return 0.7
-    if normalized == "in_person":
-        return 0.0
-    return 0.25
+    return float(config.get(normalized, config["unknown"]))
 
 
-def _score_deadline(hackathon: Hackathon, now: datetime | None = None) -> float:
+def _score_deadline(
+    hackathon: Hackathon,
+    now: datetime | None = None,
+    constants: dict[str, Any] | None = None,
+) -> float:
+    config = _active_constants(constants)["deadline"]
     days = days_until_deadline(hackathon, now)
-    if days >= 30:
-        return 1.0
-    if days >= 21:
-        return 0.85
-    if days >= 14:
-        return 0.70
-    if days >= 7:
-        return 0.45
+    for tier in config["tiers"]:
+        if days >= tier["min_days"]:
+            return float(tier["score"])
     if days > 0:
-        return 0.15
-    return 0.0
+        return float(config["positive_score"])
+    return float(config["expired_score"])
 
 
-def _score_ai_policy(hackathon: Hackathon) -> float:
+def _score_ai_policy(hackathon: Hackathon, constants: dict[str, Any] | None = None) -> float:
+    config = _active_constants(constants)["ai_policy"]
     policy = str(hackathon.ai_policy).lower()
-    if policy == "allowed":
-        return 1.0
-    if policy == "restricted":
-        return 0.45
-    return 0.0
+    return float(config.get(policy, config["default"]))
 
 
-def _score_sponsor_fit(hackathon: Hackathon) -> float:
+def _score_sponsor_fit(hackathon: Hackathon, constants: dict[str, Any] | None = None) -> float:
+    config = _active_constants(constants)["sponsor_fit"]
     if hackathon.required_apis:
-        return 0.9
+        return float(config["required_api_score"])
     if hackathon.sponsors:
-        return 0.7
+        return float(config["sponsor_score"])
     track_text = " ".join(hackathon.tracks).lower()
     if "api" in track_text or "agent" in track_text or "ai" in track_text:
-        return 0.55
-    return 0.25
+        return float(config["track_keyword_score"])
+    return float(config["default_score"])
 
 
-def _score_past_winner_analyzable(hackathon: Hackathon) -> float:
+def _score_past_winner_analyzable(
+    hackathon: Hackathon,
+    constants: dict[str, Any] | None = None,
+) -> float:
+    config = _active_constants(constants)["past_winner"]
     platform = hackathon.platform.lower()
-    if platform in {"devpost", "lablab", "dorahacks"}:
-        return 0.70
-    return 0.45
+    if platform in set(config["known_platforms"]):
+        return float(config["known_platform_score"])
+    return float(config["default_score"])
 
 
-def _score_low_submission_estimate(hackathon: Hackathon) -> float:
+def _score_low_submission_estimate(
+    hackathon: Hackathon,
+    constants: dict[str, Any] | None = None,
+) -> float:
+    config = _active_constants(constants)["low_submission_estimate"]
     text = " ".join(
         [*hackathon.tracks, *(hackathon.required_apis or []), hackathon.notes or ""]
     ).lower()
     if "sponsor" in text or "required" in text or "track" in text:
-        return 0.65
-    if hackathon.prize_total_usd and hackathon.prize_total_usd > 50000:
-        return 0.45
-    return 0.50
+        return float(config["sponsor_or_track_score"])
+    if hackathon.prize_total_usd and hackathon.prize_total_usd > float(
+        config["high_prize_threshold_usd"]
+    ):
+        return float(config["high_prize_score"])
+    return float(config["default_score"])
 
 
 def _normalized_regions(values: list[str] | None) -> set[str]:
@@ -172,8 +364,11 @@ def _text_mentions_any(text: str, phrases: set[str]) -> bool:
 
 
 def _score_taiwan_eligibility_gate(
-    hackathon: Hackathon, profile: dict[str, Any] | None
+    hackathon: Hackathon,
+    profile: dict[str, Any] | None,
+    constants: dict[str, Any] | None = None,
 ) -> float:
+    config = _active_constants(constants)["taiwan_eligibility"]
     country = _profile_country(profile)
     eligibility = hackathon.eligibility
     notes = (eligibility.notes or "").lower()
@@ -184,25 +379,25 @@ def _score_taiwan_eligibility_gate(
         country_aliases.update({"tw", "twn", "taiwan, province of china", "republic of china"})
 
     if eligibility.taiwan_eligible is True:
-        return 1.0
+        return float(config["eligible_score"])
     if eligibility.taiwan_eligible is False:
-        return 0.0
+        return float(config["blocked_score"])
     if country_aliases & excluded:
-        return 0.0
+        return float(config["blocked_score"])
     if allowed:
         if country_aliases & allowed:
-            return 1.0
+            return float(config["eligible_score"])
         if {"worldwide", "global", "all countries", "any country"} & allowed:
-            return 1.0
-        return 0.0
+            return float(config["eligible_score"])
+        return float(config["blocked_score"])
     if eligibility.student_only:
-        return 0.10
+        return float(config["student_only_score"])
     if _text_mentions_any(notes, {"india only", "students across india", "u.s. only", "us only"}):
-        return 0.0
+        return float(config["blocked_score"])
     if _text_mentions_any(notes, {"any country", "all countries", "worldwide", "global"}):
-        return 1.0
+        return float(config["eligible_score"])
     if eligibility.region_restricted is False:
-        return 1.0
+        return float(config["eligible_score"])
     if eligibility.region_restricted is True:
         if _text_mentions_any(
             notes,
@@ -214,11 +409,11 @@ def _score_taiwan_eligibility_gate(
                 "restricted jurisdictions",
             },
         ):
-            return 0.25
+            return float(config["restricted_uncertain_score"])
         if "taiwan" in notes and _text_mentions_any(notes, {"allowed", "eligible", "included"}):
-            return 0.80
-        return 0.35
-    return 0.55
+            return float(config["restricted_taiwan_included_score"])
+        return float(config["restricted_default_score"])
+    return float(config["unknown_score"])
 
 
 def _extract_competition_count(hackathon: Hackathon) -> int | None:
@@ -257,50 +452,47 @@ def _extract_competition_count(hackathon: Hackathon) -> int | None:
     return None
 
 
-def _score_competition_pressure(hackathon: Hackathon) -> float:
+def _score_competition_pressure(
+    hackathon: Hackathon,
+    constants: dict[str, Any] | None = None,
+) -> float:
+    config = _active_constants(constants)["competition_pressure"]
     count = _extract_competition_count(hackathon)
     if count is not None:
-        if count >= 10000:
-            return 0.15
-        if count >= 5000:
-            return 0.25
-        if count >= 2500:
-            return 0.35
-        if count >= 1000:
-            return 0.50
-        if count >= 500:
-            return 0.65
-        if count >= 100:
-            return 0.80
-        return 0.90
-    if hackathon.prize_total_usd and hackathon.prize_total_usd >= 250000:
-        return 0.25
-    if hackathon.prize_total_usd and hackathon.prize_total_usd >= 70000:
-        return 0.45
+        for tier in config["count_tiers"]:
+            if count >= tier["min_count"]:
+                return float(tier["score"])
+        return float(config["low_count_score"])
+    if hackathon.prize_total_usd and hackathon.prize_total_usd >= float(
+        config["very_high_prize_threshold_usd"]
+    ):
+        return float(config["very_high_prize_score"])
+    if hackathon.prize_total_usd and hackathon.prize_total_usd >= float(
+        config["high_prize_threshold_usd"]
+    ):
+        return float(config["high_prize_score"])
     if str(hackathon.platform).lower() == "devpost":
-        return 0.55
-    return 0.60
+        return float(config["devpost_default_score"])
+    return float(config["default_score"])
 
 
-def _score_submission_complexity(hackathon: Hackathon) -> float:
+def _score_submission_complexity(
+    hackathon: Hackathon,
+    constants: dict[str, Any] | None = None,
+) -> float:
+    config = _active_constants(constants)["submission_complexity"]
     requirements = hackathon.submission_requirements
-    penalties = {
-        "github_repo": 0.03,
-        "demo_url": 0.06,
-        "video": 0.08,
-        "deck": 0.06,
-        "social_post": 0.04,
-        "public_profile": 0.02,
-        "deploy_proof": 0.10,
-        "architecture_diagram": 0.07,
-    }
-    score = 0.88
-    for field, penalty in penalties.items():
+    score = float(config["base_score"])
+    for field, penalty in config["requirement_penalties"].items():
         if getattr(requirements, field):
-            score -= penalty
+            score -= float(penalty)
     required_api_count = len(hackathon.required_apis)
     if required_api_count:
-        score -= min(0.12, 0.05 + (required_api_count - 1) * 0.02)
+        score -= min(
+            float(config["required_api_max_penalty"]),
+            float(config["required_api_base_penalty"])
+            + (required_api_count - 1) * float(config["required_api_extra_penalty"]),
+        )
     notes = " ".join(
         [
             requirements.notes or "",
@@ -308,16 +500,9 @@ def _score_submission_complexity(hackathon: Hackathon) -> float:
             hackathon.prize_breakdown or "",
         ]
     ).lower()
-    for keyword, penalty in {
-        "revenue": 0.12,
-        "expenses": 0.08,
-        "hardware": 0.10,
-        "live presentation": 0.08,
-        "accelerator": 0.04,
-        "deployment proof": 0.08,
-    }.items():
+    for keyword, penalty in config["keyword_penalties"].items():
         if keyword in notes:
-            score -= penalty
+            score -= float(penalty)
     return clamp(score)
 
 
@@ -326,29 +511,39 @@ def _score_fast_lane_mode(
     now: datetime | None = None,
     *,
     enabled: bool = False,
+    constants: dict[str, Any] | None = None,
 ) -> float:
+    config = _active_constants(constants)["fast_lane"]
     if not enabled:
-        return 0.50
+        return float(config["disabled_score"])
     days = days_until_deadline(hackathon, now)
     if days <= 0:
-        return 0.0
-    complexity = _score_submission_complexity(hackathon)
+        return float(config["expired_score"])
+    complexity = _score_submission_complexity(hackathon, constants)
     shippability = clamp(
-        (complexity * 0.45)
-        + (_score_sponsor_fit(hackathon) * 0.25)
-        + (_score_format(hackathon) * 0.20)
-        + (_score_ai_policy(hackathon) * 0.10)
+        (complexity * float(config["complexity_weight"]))
+        + (_score_sponsor_fit(hackathon, constants) * float(config["sponsor_fit_weight"]))
+        + (_score_format(hackathon, constants) * float(config["format_weight"]))
+        + (_score_ai_policy(hackathon, constants) * float(config["ai_policy_weight"]))
     )
-    if days <= 3:
-        return clamp(shippability - 0.15)
-    if days <= 7:
+    if days <= float(config["three_day_threshold"]):
+        return clamp(shippability - float(config["three_day_penalty"]))
+    if days <= float(config["seven_day_threshold"]):
         return shippability
-    if days <= 14:
-        return clamp(0.70 + shippability * 0.20)
-    return 0.55
+    if days <= float(config["fourteen_day_threshold"]):
+        return clamp(
+            float(config["medium_buffer_base"])
+            + shippability * float(config["medium_buffer_weight"])
+        )
+    return float(config["default_score"])
 
 
-def _score_user_domain_fit(hackathon: Hackathon, profile: dict[str, Any] | None) -> float:
+def _score_user_domain_fit(
+    hackathon: Hackathon,
+    profile: dict[str, Any] | None,
+    constants: dict[str, Any] | None = None,
+) -> float:
+    config = _active_constants(constants)["domain_fit"]
     domains = [str(item).lower() for item in (profile or {}).get("domains", [])]
     text = " ".join(
         [
@@ -360,9 +555,12 @@ def _score_user_domain_fit(hackathon: Hackathon, profile: dict[str, Any] | None)
         ]
     ).lower()
     if not domains:
-        domains = ["ai", "agent", "cloud", "voice", "developer"]
+        domains = [str(item).lower() for item in config["default_domains"]]
     hits = sum(1 for domain in domains if any(token in text for token in domain.split()))
-    return clamp(0.35 + min(hits, 4) * 0.15)
+    return clamp(
+        float(config["base_score"])
+        + min(hits, int(config["max_hits"])) * float(config["hit_weight"])
+    )
 
 
 def evidence_quality(
@@ -371,8 +569,10 @@ def evidence_quality(
     *,
     max_age_days: int | None = None,
     stale_penalty: float | None = None,
+    constants: dict[str, Any] | None = None,
 ) -> float:
-    key_fields = ["deadline", "prize_total_usd", "cash_prize", "eligibility", "required_apis"]
+    config = _active_constants(constants)["evidence_quality"]
+    key_fields = config["key_fields"]
     confidences: list[float] = []
     for field in key_fields:
         confidence = hackathon.evidence_confidence(field)
@@ -403,27 +603,35 @@ def delivery_risk(
     hackathon: Hackathon,
     now: datetime | None = None,
     profile: dict[str, Any] | None = None,
+    constants: dict[str, Any] | None = None,
 ) -> float:
+    config = _active_constants(constants)["delivery_risk"]
     risk = 0.0
     days = days_until_deadline(hackathon, now)
-    if days < 7:
-        risk += 0.40
-    elif days < 14:
-        risk += 0.25
-    elif days < 21:
-        risk += 0.12
+    for tier in config["deadline_tiers"]:
+        if days < tier["lt_days"]:
+            risk += float(tier["risk"])
+            break
     if str(hackathon.ai_policy).lower() in {"unknown", "forbidden"}:
-        risk += 0.35
+        risk += float(config["ai_policy_unknown_or_forbidden"])
     if hackathon.eligibility.region_restricted:
-        risk += 0.25
-    if _score_taiwan_eligibility_gate(hackathon, profile) <= 0.25:
-        risk += 0.20
-    if evidence_quality(hackathon, now) < 0.7:
-        risk += 0.18
-    if _score_competition_pressure(hackathon) <= 0.25:
-        risk += 0.08
-    if _score_submission_complexity(hackathon) <= 0.45:
-        risk += 0.08
+        risk += float(config["region_restricted"])
+    if _score_taiwan_eligibility_gate(hackathon, profile, constants) <= float(
+        config["taiwan_gate_threshold"]
+    ):
+        risk += float(config["taiwan_gate_risk"])
+    if evidence_quality(hackathon, now, constants=constants) < float(
+        config["evidence_quality_threshold"]
+    ):
+        risk += float(config["low_evidence_quality"])
+    if _score_competition_pressure(hackathon, constants) <= float(
+        config["competition_pressure_threshold"]
+    ):
+        risk += float(config["competition_pressure_risk"])
+    if _score_submission_complexity(hackathon, constants) <= float(
+        config["submission_complexity_threshold"]
+    ):
+        risk += float(config["submission_complexity_risk"])
     requirements = hackathon.submission_requirements
     extra_requirements = [
         requirements.video,
@@ -432,7 +640,7 @@ def delivery_risk(
     ]
     for required in extra_requirements:
         if required:
-            risk += 0.04
+            risk += float(config["extra_requirement_risk"])
     return clamp(risk)
 
 
@@ -442,45 +650,72 @@ def score_hackathon(
     profile: dict[str, Any] | None = None,
     now: datetime | None = None,
     fast_lane_mode: bool = False,
+    constants: dict[str, Any] | None = None,
 ) -> ScoreBreakdown:
     active_weights = weights or load_weights()
     scoring_config = load_scoring_config()
+    active_constants = constants or scoring_config["constants"]
     evidence_score = evidence_quality(
         hackathon,
         now,
         max_age_days=int(scoring_config["evidence_max_age_days"]),
         stale_penalty=float(scoring_config["stale_evidence_penalty"]),
+        constants=active_constants,
     )
     trace = {
-        "prize_cash": _score_prize(hackathon),
-        "online_allowed": _score_format(hackathon),
-        "deadline_buffer": _score_deadline(hackathon, now),
-        "ai_policy_clear": _score_ai_policy(hackathon),
-        "sponsor_api_fit": _score_sponsor_fit(hackathon),
-        "past_winner_analyzable": _score_past_winner_analyzable(hackathon),
-        "low_submission_estimate": _score_low_submission_estimate(hackathon),
-        "user_domain_fit": _score_user_domain_fit(hackathon, profile),
-        "taiwan_eligibility_gate": _score_taiwan_eligibility_gate(hackathon, profile),
-        "competition_pressure_score": _score_competition_pressure(hackathon),
-        "submission_complexity_score": _score_submission_complexity(hackathon),
+        "prize_cash": _score_prize(hackathon, active_constants),
+        "online_allowed": _score_format(hackathon, active_constants),
+        "deadline_buffer": _score_deadline(hackathon, now, active_constants),
+        "ai_policy_clear": _score_ai_policy(hackathon, active_constants),
+        "sponsor_api_fit": _score_sponsor_fit(hackathon, active_constants),
+        "past_winner_analyzable": _score_past_winner_analyzable(hackathon, active_constants),
+        "low_submission_estimate": _score_low_submission_estimate(hackathon, active_constants),
+        "user_domain_fit": _score_user_domain_fit(hackathon, profile, active_constants),
+        "taiwan_eligibility_gate": _score_taiwan_eligibility_gate(
+            hackathon,
+            profile,
+            active_constants,
+        ),
+        "competition_pressure_score": _score_competition_pressure(hackathon, active_constants),
+        "submission_complexity_score": _score_submission_complexity(
+            hackathon,
+            active_constants,
+        ),
         "fast_lane_mode": _score_fast_lane_mode(
-            hackathon, now, enabled=fast_lane_mode or _profile_fast_lane_enabled(profile)
+            hackathon,
+            now,
+            enabled=fast_lane_mode or _profile_fast_lane_enabled(profile),
+            constants=active_constants,
         ),
     }
     weighted = sum(trace[key] * active_weights.get(key, 0.0) for key in trace)
-    risk = delivery_risk(hackathon, now, profile)
-    overall = clamp(weighted * (1 - risk * 0.10))
-    roi = clamp((trace["prize_cash"] * 0.75) + (trace["low_submission_estimate"] * 0.25))
+    risk = delivery_risk(hackathon, now, profile, active_constants)
+    dimension_config = active_constants["score_dimensions"]
+    risk_config = active_constants["delivery_risk"]
+    overall = clamp(weighted * (1 - risk * float(risk_config["overall_risk_weight"])))
+    roi = clamp(
+        (trace["prize_cash"] * float(dimension_config["roi_prize_weight"]))
+        + (
+            trace["low_submission_estimate"]
+            * float(dimension_config["roi_submission_weight"])
+        )
+    )
     feasibility = clamp(
-        (trace["deadline_buffer"] * 0.45)
-        + (trace["online_allowed"] * 0.30)
-        + (trace["submission_complexity_score"] * 0.15)
-        + ((1 - risk) * 0.10)
+        (trace["deadline_buffer"] * float(dimension_config["feasibility_deadline_weight"]))
+        + (trace["online_allowed"] * float(dimension_config["feasibility_format_weight"]))
+        + (
+            trace["submission_complexity_score"]
+            * float(dimension_config["feasibility_submission_weight"])
+        )
+        + ((1 - risk) * float(dimension_config["feasibility_risk_weight"]))
     )
     strategic = clamp(
-        (trace["sponsor_api_fit"] * 0.45)
-        + (trace["user_domain_fit"] * 0.35)
-        + (trace["ai_policy_clear"] * 0.20)
+        (trace["sponsor_api_fit"] * float(dimension_config["strategic_sponsor_weight"]))
+        + (trace["user_domain_fit"] * float(dimension_config["strategic_domain_weight"]))
+        + (
+            trace["ai_policy_clear"]
+            * float(dimension_config["strategic_ai_policy_weight"])
+        )
     )
     reason = (
         f"{hackathon.name}: overall {overall:.2f}; "
@@ -511,8 +746,10 @@ def rank_hackathons(
     now: datetime | None = None,
     active_buffer_days: int = 7,
     fast_lane_mode: bool = False,
+    constants: dict[str, Any] | None = None,
 ) -> tuple[list[tuple[Hackathon, ScoreBreakdown]], list[tuple[Hackathon, str]]]:
     checked_at = now or utcish_now()
+    active_constants = constants or load_scoring_constants()
     lane_enabled = fast_lane_mode or _profile_fast_lane_enabled(profile)
     effective_buffer_days = 1 if lane_enabled else active_buffer_days
     ranked: list[tuple[Hackathon, ScoreBreakdown]] = []
@@ -524,8 +761,8 @@ def rank_hackathons(
         if str(hackathon.ai_policy).lower() in {"unknown", "forbidden"}:
             rejected.append((hackathon, f"ai_policy={hackathon.ai_policy} blocks build stage"))
             continue
-        taiwan_gate = _score_taiwan_eligibility_gate(hackathon, profile)
-        if taiwan_gate <= 0.05:
+        taiwan_gate = _score_taiwan_eligibility_gate(hackathon, profile, active_constants)
+        if taiwan_gate <= float(active_constants["taiwan_eligibility"]["block_threshold"]):
             rejected.append((hackathon, "taiwan_eligibility_gate blocks participation"))
             continue
         score = score_hackathon(
@@ -534,6 +771,7 @@ def rank_hackathons(
             profile=profile,
             now=checked_at,
             fast_lane_mode=lane_enabled,
+            constants=active_constants,
         )
         ranked.append((hackathon, score))
     ranked.sort(key=lambda item: item[1].overall_score, reverse=True)

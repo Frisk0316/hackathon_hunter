@@ -17,3 +17,162 @@ active_buffer_days: 7
 fast_lane_active_buffer_days: 1
 evidence_max_age_days: 14
 stale_evidence_penalty: 0.7
+
+constants:
+  prize:
+    # Human-reviewed market anchor. Update when the active prize market shifts.
+    prize_normalization_usd: 70000
+    non_cash_score: 0.10
+    unknown_score: 0.25
+    base_score: 0.45
+    amount_weight: 0.55
+  format:
+    online: 1.0
+    hybrid: 0.7
+    in_person: 0.0
+    unknown: 0.25
+  deadline:
+    tiers:
+      - min_days: 30
+        score: 1.0
+      - min_days: 21
+        score: 0.85
+      - min_days: 14
+        score: 0.70
+      - min_days: 7
+        score: 0.45
+    positive_score: 0.15
+    expired_score: 0.0
+  ai_policy:
+    allowed: 1.0
+    restricted: 0.45
+    default: 0.0
+  sponsor_fit:
+    required_api_score: 0.9
+    sponsor_score: 0.7
+    track_keyword_score: 0.55
+    default_score: 0.25
+  past_winner:
+    known_platforms:
+      - devpost
+      - lablab
+      - dorahacks
+    known_platform_score: 0.70
+    default_score: 0.45
+  low_submission_estimate:
+    sponsor_or_track_score: 0.65
+    high_prize_threshold_usd: 50000
+    high_prize_score: 0.45
+    default_score: 0.50
+  taiwan_eligibility:
+    eligible_score: 1.0
+    blocked_score: 0.0
+    student_only_score: 0.10
+    restricted_uncertain_score: 0.25
+    restricted_taiwan_included_score: 0.80
+    restricted_default_score: 0.35
+    unknown_score: 0.55
+    block_threshold: 0.05
+  competition_pressure:
+    count_tiers:
+      - min_count: 10000
+        score: 0.15
+      - min_count: 5000
+        score: 0.25
+      - min_count: 2500
+        score: 0.35
+      - min_count: 1000
+        score: 0.50
+      - min_count: 500
+        score: 0.65
+      - min_count: 100
+        score: 0.80
+    low_count_score: 0.90
+    very_high_prize_threshold_usd: 250000
+    very_high_prize_score: 0.25
+    high_prize_threshold_usd: 70000
+    high_prize_score: 0.45
+    devpost_default_score: 0.55
+    default_score: 0.60
+  submission_complexity:
+    base_score: 0.88
+    requirement_penalties:
+      github_repo: 0.03
+      demo_url: 0.06
+      video: 0.08
+      deck: 0.06
+      social_post: 0.04
+      public_profile: 0.02
+      deploy_proof: 0.10
+      architecture_diagram: 0.07
+    required_api_base_penalty: 0.05
+    required_api_extra_penalty: 0.02
+    required_api_max_penalty: 0.12
+    keyword_penalties:
+      revenue: 0.12
+      expenses: 0.08
+      hardware: 0.10
+      live presentation: 0.08
+      accelerator: 0.04
+      deployment proof: 0.08
+  fast_lane:
+    disabled_score: 0.50
+    expired_score: 0.0
+    complexity_weight: 0.45
+    sponsor_fit_weight: 0.25
+    format_weight: 0.20
+    ai_policy_weight: 0.10
+    three_day_threshold: 3
+    three_day_penalty: 0.15
+    seven_day_threshold: 7
+    fourteen_day_threshold: 14
+    medium_buffer_base: 0.70
+    medium_buffer_weight: 0.20
+    default_score: 0.55
+  domain_fit:
+    default_domains:
+      - ai
+      - agent
+      - cloud
+      - voice
+      - developer
+    base_score: 0.35
+    hit_weight: 0.15
+    max_hits: 4
+  evidence_quality:
+    key_fields:
+      - deadline
+      - prize_total_usd
+      - cash_prize
+      - eligibility
+      - required_apis
+  delivery_risk:
+    deadline_tiers:
+      - lt_days: 7
+        risk: 0.40
+      - lt_days: 14
+        risk: 0.25
+      - lt_days: 21
+        risk: 0.12
+    ai_policy_unknown_or_forbidden: 0.35
+    region_restricted: 0.25
+    taiwan_gate_threshold: 0.25
+    taiwan_gate_risk: 0.20
+    evidence_quality_threshold: 0.7
+    low_evidence_quality: 0.18
+    competition_pressure_threshold: 0.25
+    competition_pressure_risk: 0.08
+    submission_complexity_threshold: 0.45
+    submission_complexity_risk: 0.08
+    extra_requirement_risk: 0.04
+    overall_risk_weight: 0.10
+  score_dimensions:
+    roi_prize_weight: 0.75
+    roi_submission_weight: 0.25
+    feasibility_deadline_weight: 0.45
+    feasibility_format_weight: 0.30
+    feasibility_submission_weight: 0.15
+    feasibility_risk_weight: 0.10
+    strategic_sponsor_weight: 0.45
+    strategic_domain_weight: 0.35
+    strategic_ai_policy_weight: 0.20

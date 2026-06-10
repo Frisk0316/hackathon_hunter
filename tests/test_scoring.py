@@ -1,8 +1,14 @@
+from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from hackathon_hunter.models import Eligibility, Evidence, Hackathon, SubmissionRequirements
-from hackathon_hunter.scoring import rank_hackathons, score_hackathon
+from hackathon_hunter.scoring import (
+    DEFAULT_SCORING_CONSTANTS,
+    load_scoring_constants,
+    rank_hackathons,
+    score_hackathon,
+)
 from hackathon_hunter.storage import load_hackathons
 
 FIXED_NOW = datetime(2026, 6, 10, 0, 0, tzinfo=timezone.utc)
@@ -144,3 +150,46 @@ def test_stale_evidence_penalizes_evidence_quality_score() -> None:
     stale_score = score_hackathon(_hackathon(source_evidence=stale_evidence), now=FIXED_NOW)
 
     assert stale_score.evidence_quality_score < fresh_score.evidence_quality_score
+
+
+def test_scoring_constants_deep_merge_from_config(tmp_path: Path) -> None:
+    config_path = tmp_path / "scoring.yaml"
+    config_path.write_text(
+        "\n".join(
+            [
+                "constants:",
+                "  prize:",
+                "    prize_normalization_usd: 140000",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    constants = load_scoring_constants(config_path)
+
+    assert constants["prize"]["prize_normalization_usd"] == 140000
+    assert constants["prize"]["base_score"] == DEFAULT_SCORING_CONSTANTS["prize"][
+        "base_score"
+    ]
+    assert constants["deadline"]["tiers"] == DEFAULT_SCORING_CONSTANTS["deadline"]["tiers"]
+
+
+def test_prize_normalization_constant_affects_prize_trace() -> None:
+    default_constants = deepcopy(DEFAULT_SCORING_CONSTANTS)
+    adjusted_constants = deepcopy(DEFAULT_SCORING_CONSTANTS)
+    adjusted_constants["prize"]["prize_normalization_usd"] = 140000
+    hackathon = _hackathon(prize_total_usd=70000)
+
+    default_score = score_hackathon(
+        hackathon,
+        now=FIXED_NOW,
+        constants=default_constants,
+    )
+    adjusted_score = score_hackathon(
+        hackathon,
+        now=FIXED_NOW,
+        constants=adjusted_constants,
+    )
+
+    assert default_score.trace["prize_cash"] == 1.0
+    assert adjusted_score.trace["prize_cash"] < default_score.trace["prize_cash"]
