@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from hackathon_hunter.models import Eligibility, Hackathon, SubmissionRequirements
+from hackathon_hunter.models import Eligibility, Evidence, Hackathon, SubmissionRequirements
 from hackathon_hunter.scoring import rank_hackathons, score_hackathon
 from hackathon_hunter.storage import load_hackathons
 
@@ -122,3 +122,25 @@ def test_competition_pressure_and_submission_complexity_affect_trace() -> None:
     assert crowded_score.trace["submission_complexity_score"] < niche_score.trace[
         "submission_complexity_score"
     ]
+
+
+def test_stale_evidence_penalizes_evidence_quality_score() -> None:
+    fresh_evidence = [
+        Evidence(
+            field=field,
+            url="https://example.com",
+            quote="fixture",
+            fetched_at=FIXED_NOW,
+            confidence=0.9,
+        )
+        for field in ["deadline", "prize_total_usd", "cash_prize", "eligibility", "required_apis"]
+    ]
+    stale_evidence = [
+        item.model_copy(update={"fetched_at": FIXED_NOW - timedelta(days=30)})
+        for item in fresh_evidence
+    ]
+
+    fresh_score = score_hackathon(_hackathon(source_evidence=fresh_evidence), now=FIXED_NOW)
+    stale_score = score_hackathon(_hackathon(source_evidence=stale_evidence), now=FIXED_NOW)
+
+    assert stale_score.evidence_quality_score < fresh_score.evidence_quality_score

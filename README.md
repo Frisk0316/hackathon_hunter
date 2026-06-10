@@ -25,9 +25,18 @@ pip install -e .[dev]
 hackathon-hunter collect --mock
 hackathon-hunter rank --input data/processed/mock_hackathons.json
 hackathon-hunter check-rules --input data/processed/mock_hackathons.json
-hackathon-hunter ideate --hackathon-id mock-hackathon-001
-hackathon-hunter build-spec --hackathon-id mock-hackathon-001 --idea-id idea-001
+hackathon-hunter ideate --hackathon-id mock-hackathon-001 --input data/processed/mock_hackathons.json
+hackathon-hunter build-spec --hackathon-id mock-hackathon-001 --idea-id idea-001 --input data/processed/mock_hackathons.json
+hackathon-hunter watch --input data/processed/mock_hackathons.json
+hackathon-hunter status --input data/processed/mock_hackathons.json
 hackathon-hunter qa --project projects/mock-hackathon-001/idea-001
+```
+
+Import the next evidence-backed radar from Claude with the schema gate:
+
+```bash
+hackathon-hunter import --input examples/hackathons.sample.json --dry-run
+hackathon-hunter import --input path/to/claude_radar.json --merge
 ```
 
 ## Current Intelligence

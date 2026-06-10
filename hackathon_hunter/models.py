@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -111,6 +111,26 @@ class Hackathon(BaseModel):
         if not matches:
             return None
         return max(item.confidence for item in matches)
+
+    def stale_evidence_fields(
+        self,
+        now: datetime,
+        max_age_days: int,
+        fields: list[str] | None = None,
+    ) -> list[str]:
+        if now.tzinfo is None or now.utcoffset() is None:
+            raise ValueError("now must include timezone")
+        cutoff = now - timedelta(days=max_age_days)
+        fields_to_check = fields or sorted({item.field for item in self.source_evidence})
+        stale_fields: list[str] = []
+        for field in fields_to_check:
+            evidence = self.evidence_for(field)
+            if not evidence:
+                continue
+            newest = max(item.fetched_at for item in evidence)
+            if newest < cutoff:
+                stale_fields.append(field)
+        return stale_fields
 
     def average_evidence_confidence(self) -> float:
         if not self.source_evidence:

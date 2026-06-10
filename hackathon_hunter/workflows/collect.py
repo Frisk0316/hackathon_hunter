@@ -6,6 +6,10 @@ from typing import Any
 
 from hackathon_hunter.reports import render_ranking_report
 from hackathon_hunter.scoring import rank_hackathons
+from hackathon_hunter.sources.base import SourceAdapter
+from hackathon_hunter.sources.devpost import DevpostSource
+from hackathon_hunter.sources.dorahacks import DoraHacksSource
+from hackathon_hunter.sources.lablab import LablabSource
 from hackathon_hunter.sources.mock import MockSource
 from hackathon_hunter.sources.web_search import WebSearchSource
 from hackathon_hunter.storage import (
@@ -18,6 +22,29 @@ from hackathon_hunter.storage import (
     unique_path,
     utcish_now,
 )
+
+SOURCE_FACTORIES: dict[str, type[SourceAdapter]] = {
+    "mock": MockSource,
+    "web_search": WebSearchSource,
+    "devpost": DevpostSource,
+    "lablab": LablabSource,
+    "dorahacks": DoraHacksSource,
+}
+
+
+class CollectError(RuntimeError):
+    def __init__(self, errors: list[str], raw_path: Path | None = None) -> None:
+        super().__init__("\n".join(errors))
+        self.errors = errors
+        self.raw_path = raw_path
+
+
+def _source_for(source_name: str) -> SourceAdapter:
+    source_factory = SOURCE_FACTORIES.get(source_name)
+    if source_factory is None:
+        supported = ", ".join(sorted(SOURCE_FACTORIES))
+        raise CollectError([f"Unknown source '{source_name}'. Supported sources: {supported}."])
+    return source_factory()
 
 
 def _passes_filters(
@@ -43,9 +70,14 @@ def run_collect(
     min_prize_usd: float = 1000,
     online_only: bool = False,
     mock: bool = False,
+    source_name: str | None = None,
+    root: Path | None = None,
 ) -> dict[str, Path]:
-    source = MockSource() if mock else WebSearchSource()
+    selected_source = "mock" if mock else (source_name or "web_search")
+    is_mock_source = selected_source == "mock"
+    source = _source_for(selected_source)
     result = source.collect()
+    base = root or project_path()
     raw_path = save_raw_snapshot(
         result.source,
         {
@@ -53,14 +85,18 @@ def run_collect(
             "errors": result.errors,
             "hackathons": result.hackathons,
         },
+        root=base,
     )
+    if not result.hackathons and result.errors:
+        raise CollectError(result.errors, raw_path=raw_path)
+
     filtered = [
         item
         for item in result.hackathons
         if _passes_filters(item, days_ahead, min_prize_usd, online_only)
     ]
     processed_items = apply_freshness(deduplicate_hackathons(filtered))
-    processed_name = "mock_hackathons.json" if mock else None
+    processed_name = "mock_hackathons.json" if is_mock_source else None
     processed_path = save_processed_hackathons(
         processed_items,
         name=processed_name,
@@ -73,11 +109,13 @@ def run_collect(
                 "online_only": online_only,
             },
         },
+        root=base,
+        overwrite=is_mock_source,
     )
     ranked, rejected = rank_hackathons(processed_items)
-    report_stem = "radar_mock" if mock else "radar"
+    report_stem = "radar_mock" if is_mock_source else "radar"
     report_path = unique_path(
-        project_path("reports", f"{report_stem}_{utcish_now().strftime('%Y%m%d')}.md")
+        base / "reports" / f"{report_stem}_{utcish_now().strftime('%Y%m%d')}.md"
     )
     save_report(report_path, render_ranking_report(ranked, rejected, utcish_now()))
     return {"raw": raw_path, "processed": processed_path, "report": report_path}

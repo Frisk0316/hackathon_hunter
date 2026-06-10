@@ -21,13 +21,32 @@ def test_mock_cli_end_to_end() -> None:
     result = runner.invoke(app, ["check-rules", "--input", "data/processed/mock_hackathons.json"])
     assert result.exit_code == 0, result.output
 
-    result = runner.invoke(app, ["ideate", "--hackathon-id", "mock-hackathon-001", "--n", "2"])
+    result = runner.invoke(
+        app,
+        [
+            "ideate",
+            "--hackathon-id",
+            "mock-hackathon-001",
+            "--n",
+            "2",
+            "--input",
+            "data/processed/mock_hackathons.json",
+        ],
+    )
     assert result.exit_code == 0, result.output
     assert Path("strategy/mock-hackathon-001_ideas.json").exists()
 
     result = runner.invoke(
         app,
-        ["build-spec", "--hackathon-id", "mock-hackathon-001", "--idea-id", "idea-001"],
+        [
+            "build-spec",
+            "--hackathon-id",
+            "mock-hackathon-001",
+            "--idea-id",
+            "idea-001",
+            "--input",
+            "data/processed/mock_hackathons.json",
+        ],
     )
     assert result.exit_code == 0, result.output
     assert Path("projects/mock-hackathon-001/idea-001/SPEC.md").exists()
@@ -38,3 +57,10 @@ def test_mock_cli_end_to_end() -> None:
     )
     assert result.exit_code == 0, result.output
     assert "passed: True" in result.output
+
+    before_logs = set(Path("logs/runs").glob("*.json"))
+    result = runner.invoke(app, ["status", "--input", "data/processed/mock_hackathons.json"])
+    assert result.exit_code == 0, result.output
+    assert "mock-hackathon-001" in result.output
+    after_logs = set(Path("logs/runs").glob("*.json"))
+    assert after_logs - before_logs

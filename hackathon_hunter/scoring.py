@@ -24,17 +24,37 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "submission_complexity_score": 0.08,
     "fast_lane_mode": 0.05,
 }
+DEFAULT_SCORING_SETTINGS: dict[str, float | int] = {
+    "minimum_evidence_confidence": 0.7,
+    "active_buffer_days": 7,
+    "fast_lane_active_buffer_days": 1,
+    "evidence_max_age_days": 14,
+    "stale_evidence_penalty": 0.7,
+}
+STALE_EVIDENCE_FIELDS = [
+    "deadline",
+    "eligibility",
+    "ai_policy",
+    "prize_total_usd",
+    "prize_breakdown",
+    "cash_prize",
+]
 
 
 def clamp(value: float) -> float:
     return max(0.0, min(1.0, value))
 
 
-def load_weights(path: str | Path | None = None) -> dict[str, float]:
+def load_scoring_config(path: str | Path | None = None) -> dict[str, Any]:
     config_path = Path(path) if path else project_path("config", "scoring.yaml")
     if not config_path.exists():
-        return DEFAULT_WEIGHTS
+        return {"weights": DEFAULT_WEIGHTS, **DEFAULT_SCORING_SETTINGS}
     payload = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    return {"weights": payload.get("weights", {}), **DEFAULT_SCORING_SETTINGS, **payload}
+
+
+def load_weights(path: str | Path | None = None) -> dict[str, float]:
+    payload = load_scoring_config(path)
     weights = payload.get("weights", {})
     merged = {**DEFAULT_WEIGHTS, **weights}
     total = sum(merged.values())
@@ -345,7 +365,13 @@ def _score_user_domain_fit(hackathon: Hackathon, profile: dict[str, Any] | None)
     return clamp(0.35 + min(hits, 4) * 0.15)
 
 
-def evidence_quality(hackathon: Hackathon) -> float:
+def evidence_quality(
+    hackathon: Hackathon,
+    now: datetime | None = None,
+    *,
+    max_age_days: int | None = None,
+    stale_penalty: float | None = None,
+) -> float:
     key_fields = ["deadline", "prize_total_usd", "cash_prize", "eligibility", "required_apis"]
     confidences: list[float] = []
     for field in key_fields:
@@ -353,7 +379,24 @@ def evidence_quality(hackathon: Hackathon) -> float:
         confidences.append(confidence if confidence is not None else 0.0)
     if hackathon.source_evidence:
         confidences.append(hackathon.average_evidence_confidence())
-    return clamp(sum(confidences) / len(confidences))
+    score = clamp(sum(confidences) / len(confidences))
+    if now is None:
+        return score
+    scoring_config = load_scoring_config()
+    effective_max_age = int(
+        max_age_days if max_age_days is not None else scoring_config["evidence_max_age_days"]
+    )
+    effective_penalty = float(
+        stale_penalty if stale_penalty is not None else scoring_config["stale_evidence_penalty"]
+    )
+    stale_fields = hackathon.stale_evidence_fields(
+        now,
+        max_age_days=effective_max_age,
+        fields=STALE_EVIDENCE_FIELDS,
+    )
+    if stale_fields:
+        score *= effective_penalty
+    return clamp(score)
 
 
 def delivery_risk(
@@ -375,7 +418,7 @@ def delivery_risk(
         risk += 0.25
     if _score_taiwan_eligibility_gate(hackathon, profile) <= 0.25:
         risk += 0.20
-    if evidence_quality(hackathon) < 0.7:
+    if evidence_quality(hackathon, now) < 0.7:
         risk += 0.18
     if _score_competition_pressure(hackathon) <= 0.25:
         risk += 0.08
@@ -401,6 +444,13 @@ def score_hackathon(
     fast_lane_mode: bool = False,
 ) -> ScoreBreakdown:
     active_weights = weights or load_weights()
+    scoring_config = load_scoring_config()
+    evidence_score = evidence_quality(
+        hackathon,
+        now,
+        max_age_days=int(scoring_config["evidence_max_age_days"]),
+        stale_penalty=float(scoring_config["stale_evidence_penalty"]),
+    )
     trace = {
         "prize_cash": _score_prize(hackathon),
         "online_allowed": _score_format(hackathon),
@@ -439,14 +489,14 @@ def score_hackathon(
         f"{trace['taiwan_eligibility_gate']:.2f}, competition "
         f"{trace['competition_pressure_score']:.2f}, submission complexity "
         f"{trace['submission_complexity_score']:.2f}, evidence "
-        f"{evidence_quality(hackathon):.2f}, delivery risk {risk:.2f}."
+        f"{evidence_score:.2f}, delivery risk {risk:.2f}."
     )
     return ScoreBreakdown(
         hackathon_id=hackathon.id,
         roi_score=roi,
         feasibility_score=feasibility,
         strategic_fit_score=strategic,
-        evidence_quality_score=evidence_quality(hackathon),
+        evidence_quality_score=evidence_score,
         delivery_risk_score=risk,
         overall_score=overall,
         ranking_reason=reason,

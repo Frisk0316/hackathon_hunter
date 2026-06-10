@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from hackathon_hunter.models import Hackathon, RulesCheckResult
+from hackathon_hunter.scoring import STALE_EVIDENCE_FIELDS, load_scoring_config
 from hackathon_hunter.storage import utcish_now
 
 
@@ -21,6 +22,7 @@ def check_rules(
     active_buffer_days: int = 7,
 ) -> RulesCheckResult:
     checked_at = now or utcish_now()
+    scoring_config = load_scoring_config()
     blocking: list[str] = []
     warnings: list[str] = []
 
@@ -78,12 +80,20 @@ def check_rules(
         if hackathon.evidence_confidence(field) is None:
             warnings.append(f"Missing evidence for {field}: 來源不足")
 
-    human_review_required = bool(blocking or warnings) or True
+    stale_fields = hackathon.stale_evidence_fields(
+        checked_at,
+        max_age_days=int(scoring_config["evidence_max_age_days"]),
+        fields=STALE_EVIDENCE_FIELDS,
+    )
+    for field in stale_fields:
+        warnings.append(f"Evidence stale for {field}; re-verify before committing: 來源過期")
+
     return RulesCheckResult(
         hackathon_id=hackathon.id,
         eligible=not blocking,
         blocking_issues=blocking,
         warnings=warnings,
         submission_requirements=hackathon.submission_requirements,
-        human_review_required=human_review_required,
+        # By design, every rules check still needs human review under the five-gate policy.
+        human_review_required=True,
     )

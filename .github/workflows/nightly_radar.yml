@@ -15,7 +15,10 @@ jobs:
           python-version: "3.10"
       - name: Install
         run: pip install -e .[dev]
-      - name: Generate offline mock radar
-        run: python -m hackathon_hunter collect --mock --online-only --min-prize-usd 1000
-      - name: Check rules
-        run: python -m hackathon_hunter check-rules --input data/processed/mock_hackathons.json
+      - name: Deadline watch
+        run: |
+          set +e
+          python -m hackathon_hunter watch
+          watch_exit=$?
+          cat reports/watch_*.md >> "$GITHUB_STEP_SUMMARY"
+          exit "$watch_exit"
