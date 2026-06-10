@@ -1,0 +1,336 @@
+{
+  "generated_at": "2026-06-10T03:50:00+08:00",
+  "as_of_date": "2026-06-10",
+  "freshness_rule": "active = deadline >= 2026-06-17 (today + 7-day buffer). Closed candidates retained for review only.",
+  "hackathons": [
+    {
+      "id": "qwen-cloud-global-ai-2026",
+      "name": "Global AI Hackathon Series with Qwen Cloud",
+      "platform": "devpost",
+      "url": "https://qwencloud-hackathon.devpost.com/",
+      "rules_url": "https://qwencloud-hackathon.devpost.com/rules",
+      "deadline": "2026-07-09T14:00:00-07:00",
+      "deadline_timezone": "America/Los_Angeles",
+      "format": "online",
+      "prize_total_usd": 70000,
+      "cash_prize": true,
+      "prize_breakdown": "Per track: $7,000 cash + $3,000 cloud credits (5 tracks). Blog Post Award: $500 cash + $500 credits x10. Honorable Mention: $500 cash + $500 credits x10.",
+      "tracks": ["MemoryAgent", "AI Showrunner", "Agent Society", "Autopilot Agent", "EdgeAgent"],
+      "sponsors": ["Alibaba Cloud", "Qwen Cloud"],
+      "required_apis": ["Qwen models on Qwen Cloud (required)", "Wan/HappyHorse video gen (optional, Track 2)"],
+      "judging_criteria": [
+        "Technical Depth & Engineering (30%)",
+        "Innovation & AI Creativity (30%)",
+        "Problem Value & Impact (25%)",
+        "Presentation & Documentation (15%)"
+      ],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "region_restricted": true,
+        "student_only": false,
+        "team_required": false,
+        "team_size": "1-5",
+        "notes": "Excludes 'Restricted Jurisdictions' where QwenCloud registration is unsupported or under sanctions. Taiwan NOT explicitly listed; eligibility depends on whether QwenCloud account registration succeeds from Taiwan. MUST VERIFY before committing."
+      },
+      "submission_requirements": {
+        "github_repo": true,
+        "demo_url": false,
+        "video": true,
+        "deck": false,
+        "social_post": false,
+        "public_profile": true,
+        "deploy_proof": true,
+        "architecture_diagram": true,
+        "notes": "Public OSS GitHub repo with license; proof of Alibaba Cloud deployment; architecture diagram; ~3min public video (YouTube/Vimeo/Facebook); text description + track."
+      },
+      "source_evidence": [
+        {"field": "deadline", "url": "https://qwencloud-hackathon.devpost.com/", "quote": "Jul 9, 2026 @ 2:00pm PDT", "fetched_at": "2026-06-10T03:45:00+08:00", "confidence": 0.95},
+        {"field": "prize_total_usd", "url": "https://qwencloud-hackathon.devpost.com/", "quote": "compete for $70K in prizes across five tracks; Each track: $7,000 cash + $3,000 cloud credits", "fetched_at": "2026-06-10T03:45:00+08:00", "confidence": 0.9},
+        {"field": "required_apis", "url": "https://qwencloud-hackathon.devpost.com/", "quote": "Build your own AI Agent on Qwen Cloud; Proof of Alibaba Cloud Deployment", "fetched_at": "2026-06-10T03:45:00+08:00", "confidence": 0.9},
+        {"field": "eligibility", "url": "https://qwencloud-hackathon.devpost.com/rules", "quote": "excludes participants from 'Restricted Jurisdictions'—countries/territories where QwenCloud registration isn't supported, or subject to sanctions. Taiwan's status is not explicitly listed.", "fetched_at": "2026-06-10T03:48:00+08:00", "confidence": 0.6}
+      ],
+      "status": "open",
+      "notes": "TOP PICK on prize+API-fit. Sponsor-API track (must use Qwen) filters lazy entries. Agent-themed = core strength. BLOCKING UNKNOWN: verify Qwen Cloud account creation works from Taiwan before building."
+    },
+    {
+      "id": "elevenlabs-voice-ai-2026",
+      "name": "ElevenLabs Voice AI Hackathon",
+      "platform": "lablab",
+      "url": "https://elevenlabs.io/blog/ai-hackathon",
+      "rules_url": "https://lablab.ai/event/eleven-labs-ai-hackathon",
+      "deadline": "2026-07-31T23:59:00-07:00",
+      "deadline_timezone": "America/Los_Angeles",
+      "format": "online",
+      "prize_total_usd": 5000,
+      "cash_prize": true,
+      "prize_breakdown": "1st: $3,000 + 3mo Creator; 2nd: $1,000 + 3mo Creator; 3rd: $1,000 + 1mo Creator; 4th-5th: 1mo Creator. Top 3 -> Slingshot accelerator opportunity.",
+      "tracks": ["Voice AI / Conversational Agents"],
+      "sponsors": ["ElevenLabs"],
+      "required_apis": ["ElevenLabs API (implied by theme)"],
+      "judging_criteria": ["Unknown - verify on rules page"],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "region_restricted": false,
+        "student_only": false,
+        "team_required": false,
+        "notes": "Registration closes morning of Jul 28; finalists present live Aug 7."
+      },
+      "submission_requirements": {
+        "github_repo": true,
+        "demo_url": true,
+        "video": true,
+        "deck": true,
+        "social_post": false,
+        "public_profile": true,
+        "notes": "Working prototype + presentation due Jul 31. Build window only ~3 days (Jul 28-31)."
+      },
+      "source_evidence": [
+        {"field": "deadline", "url": "https://elevenlabs.io/blog/ai-hackathon", "quote": "3-day online event ... July 28th to 31st ... submitting a working prototype and a presentation on the final day - July 31st", "fetched_at": "2026-06-10T03:48:00+08:00", "confidence": 0.85},
+        {"field": "prize_breakdown", "url": "https://elevenlabs.io/blog/ai-hackathon", "quote": "1st place receives $3,000 cash plus 3 months of Creator plan; 2nd $1,000 + 3mo; 3rd $1,000 + 1mo", "fetched_at": "2026-06-10T03:48:00+08:00", "confidence": 0.8}
+      ],
+      "status": "open",
+      "notes": "Clear sponsor-API fit (ElevenLabs voice). Smaller prize, very short 3-day build window. Good secondary target; voice-agent demo is high-impact for judges."
+    },
+    {
+      "id": "devnetwork-api-cloud-ai-2026",
+      "name": "DevNetwork [API + Cloud + AI] Hackathon 2026 (API World 2026)",
+      "platform": "devpost",
+      "url": "https://api-cloud-ai-hackathon-2026.devpost.com/",
+      "rules_url": "https://api-cloud-ai-hackathon-2026.devpost.com/rules",
+      "deadline": "2026-09-03T23:59:00-07:00",
+      "deadline_timezone": "America/Los_Angeles",
+      "format": "hybrid",
+      "prize_total_usd": 0,
+      "cash_prize": false,
+      "prize_breakdown": "Main: 9 non-cash prizes (Amazon Echos up to 5 + 2027 conference all-access passes). 8 sponsor challenge prizes marked 'Coming Soon!'",
+      "tracks": ["Perfect Corp", "Foxit", "Elastic", "MavenMule", "name.com", "Kong", "SerpApi", "Wundergraph"],
+      "sponsors": ["Perfect Corp", "Foxit", "Elastic", "MavenMule", "name.com", "Kong", "SerpApi", "Wundergraph"],
+      "required_apis": ["Per-sponsor challenge APIs (varies by track)"],
+      "judging_criteria": ["Progress", "Concept (solves a real problem)", "Feasibility (could become a startup)"],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "region_restricted": false,
+        "student_only": false,
+        "team_required": false,
+        "notes": "Age 18+. 'Participants from any country are allowed.' Online participation available (in-person awards Sep 2-3 Santa Clara)."
+      },
+      "submission_requirements": {
+        "github_repo": true,
+        "demo_url": true,
+        "video": true,
+        "deck": false,
+        "social_post": false,
+        "public_profile": true,
+        "notes": "Step-by-step instructions referenced on site; confirm exact reqs."
+      },
+      "source_evidence": [
+        {"field": "deadline", "url": "https://api-cloud-ai-hackathon-2026.devpost.com/", "quote": "Online - August 17 - September 3, 2026; September 2-3 - Santa Clara Convention Center", "fetched_at": "2026-06-10T03:47:00+08:00", "confidence": 0.9},
+        {"field": "cash_prize", "url": "https://api-cloud-ai-hackathon-2026.devpost.com/", "quote": "9 non-cash prizes ... Amazon Echos (Up to 5) plus DevNetwork Premium All-Access Passes", "fetched_at": "2026-06-10T03:47:00+08:00", "confidence": 0.85},
+        {"field": "eligibility", "url": "https://api-cloud-ai-hackathon-2026.devpost.com/", "quote": "Age - 18 years and older | Citizenship - Participants from any country are allowed", "fetched_at": "2026-06-10T03:47:00+08:00", "confidence": 0.9}
+      ],
+      "status": "open",
+      "notes": "8 sponsor-challenge tracks = strategy sweet spot (low completion per track), no region restriction, long runway. BUT main prizes non-cash and sponsor-challenge prizes still 'Coming Soon' -> low/unknown ROI. Re-evaluate once sponsor prizes announced."
+    },
+    {
+      "id": "munichtech-innovation-2026",
+      "name": "MunichTech Innovation Hackathon 2026",
+      "platform": "dorahacks",
+      "url": "https://dorahacks.io/hackathon/2019",
+      "rules_url": "https://dorahacks.io/hackathon/2019",
+      "deadline": "2026-09-20T23:59:00+02:00",
+      "deadline_timezone": "Europe/Berlin",
+      "format": "online",
+      "prize_total_usd": null,
+      "cash_prize": null,
+      "prize_breakdown": "Unknown - not yet verified",
+      "tracks": ["AI", "AI Agents", "Generative AI", "DeepTech", "Industry / Applied solutions"],
+      "sponsors": [],
+      "required_apis": [],
+      "judging_criteria": ["Unknown - verify"],
+      "ai_policy": "unknown",
+      "eligibility": {
+        "region_restricted": null,
+        "student_only": null,
+        "team_required": null,
+        "notes": "Virtual format per search result; details unverified."
+      },
+      "submission_requirements": {"notes": "Unverified - fetch detail page before use."},
+      "source_evidence": [
+        {"field": "deadline", "url": "https://dorahacks.io/hackathon/2019", "quote": "submission starting September 20, 2026 and a deadline of September 20, 2026, offered virtually (search snippet, low confidence)", "fetched_at": "2026-06-10T03:46:00+08:00", "confidence": 0.4}
+      ],
+      "status": "unknown",
+      "notes": "LOW EVIDENCE. Search snippet only; prize/rules/AI-policy unverified. Per spec, ai_policy=unknown -> cannot enter build stage until verified. Keep as watchlist; fetch detail page next round."
+    },
+    {
+      "id": "uipath-agenthack-2026",
+      "name": "UiPath AgentHack",
+      "platform": "devpost",
+      "url": "https://uipath-agenthack.devpost.com/",
+      "rules_url": "https://uipath-agenthack.devpost.com/rules",
+      "deadline": "2026-06-29T23:45:00-04:00",
+      "deadline_timezone": "America/New_York",
+      "format": "online",
+      "prize_total_usd": 50000,
+      "cash_prize": true,
+      "prize_breakdown": "Grand Prize $8,000; per-track (Maestro Case / Maestro BPMN / Test Cloud) Best $5,000 + Runner-up $3,000 + Honorable $2,000; Most Creative $3,000; Best Demo $3,000; Best Cross-Platform $1,500; Best First-Time $1,500; Best Product Feedback $1,500; People's Choice $500 x3.",
+      "tracks": ["UiPath Maestro Case", "UiPath Maestro BPMN", "UiPath Test Cloud"],
+      "sponsors": ["UiPath"],
+      "required_apis": ["UiPath Automation Cloud (required orchestration layer)", "LangChain/CrewAI/AutoGen allowed as supplementary"],
+      "judging_criteria": [
+        "Business Impact & Adoption Potential",
+        "Platform Usage",
+        "Technical Execution, Feasibility & Versatility",
+        "Completeness of Delivery",
+        "Creativity & Innovation",
+        "Presentation",
+        "Bonus: use of coding agents through UiPath for Coding Agents"
+      ],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "taiwan_eligible": true,
+        "region_restricted": false,
+        "student_only": false,
+        "team_required": false,
+        "excluded_regions": [],
+        "notes": "'All countries/territories, excluding standard exceptions' -> Taiwan eligible. Age = legal age of majority."
+      },
+      "submission_requirements": {
+        "github_repo": true,
+        "demo_url": true,
+        "video": true,
+        "deck": true,
+        "social_post": false,
+        "public_profile": true,
+        "deploy_proof": true,
+        "notes": "Devpost page; demo video <=5min; public GitHub (MIT/Apache-2.0); functional prototype on UiPath Automation Cloud; presentation deck (template provided)."
+      },
+      "source_evidence": [
+        {"field": "deadline", "url": "https://uipath-agenthack.devpost.com/", "quote": "Deadline: Jun 29, 2026 @ 11:45pm EDT", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.95},
+        {"field": "prize_total_usd", "url": "https://uipath-agenthack.devpost.com/", "quote": "$50,000 in cash; Grand Prize $8,000", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.9},
+        {"field": "required_apis", "url": "https://uipath-agenthack.devpost.com/", "quote": "UiPath Automation Cloud is mandatory ... external frameworks (LangChain, CrewAI, AutoGen) are permitted as supplementary tools", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.9},
+        {"field": "eligibility", "url": "https://uipath-agenthack.devpost.com/", "quote": "All countries/territories, excluding standard exceptions", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.85}
+      ],
+      "status": "open",
+      "notes": "STRONG: $50K cash, online, Taiwan eligible, and bonus points for coding-agent usage = direct Claude/Codex edge. Cost: UiPath Automation Cloud learning curve + RPA/BPMN domain. Deadline 6/29 = ~19 days, workable."
+    },
+    {
+      "id": "h0-vercel-v0-aws-2026",
+      "name": "H0: Hack the Zero Stack with Vercel v0 and AWS Databases",
+      "platform": "devpost",
+      "url": "https://h01.devpost.com/",
+      "rules_url": "https://h01.devpost.com/rules",
+      "deadline": "2026-06-29T17:00:00-07:00",
+      "deadline_timezone": "America/Los_Angeles",
+      "format": "online",
+      "prize_total_usd": 80000,
+      "cash_prize": true,
+      "prize_breakdown": "$80,000 cash + $80,000 AWS credits. Per track (B2C/B2B/Million-scale/Open): 1st $10k+$10k credits, 2nd $5k+$5k, 3rd $3k+$3k. Special categories (Best Tech/Design/Impact/Original) $2k+$2k each.",
+      "tracks": ["Monetizable B2C", "Monetizable B2B", "Million-scale global", "Open Innovation"],
+      "sponsors": ["Vercel", "AWS"],
+      "required_apis": ["Vercel v0 (required)", "AWS Databases: Aurora PostgreSQL / Aurora DSQL / DynamoDB (required)"],
+      "judging_criteria": ["Technological Implementation", "Design", "Impact & Real-world Applicability", "Originality"],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "taiwan_eligible": null,
+        "region_restricted": true,
+        "student_only": false,
+        "team_required": false,
+        "notes": "'Specific countries/territories excluded' - Taiwan status NOT specified. VERIFY excluded list before committing."
+      },
+      "submission_requirements": {
+        "github_repo": false,
+        "demo_url": true,
+        "video": true,
+        "deck": false,
+        "deploy_proof": true,
+        "architecture_diagram": true,
+        "public_profile": true,
+        "notes": "Text description; <3min demo video; Vercel project link with team ID; architecture diagram; storage config screenshots."
+      },
+      "source_evidence": [
+        {"field": "deadline", "url": "https://h01.devpost.com/", "quote": "June 29, 2026 @ 5:00pm PDT", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.95},
+        {"field": "prize_total_usd", "url": "https://h01.devpost.com/", "quote": "$80,000 in cash plus an additional $80,000 in AWS credits", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.9},
+        {"field": "required_apis", "url": "https://h01.devpost.com/", "quote": "Vercel's v0, AWS Databases (Amazon Aurora PostgreSQL, Aurora DSQL, or DynamoDB)", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.9},
+        {"field": "eligibility", "url": "https://h01.devpost.com/", "quote": "Specific countries/territories excluded", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.6}
+      ],
+      "status": "open",
+      "notes": "Highest cash ($80K). Vercel v0 + AWS = fast to build with coding agents (Next.js fits our stack). Region exclusion unverified for Taiwan -> human gate. Deadline 6/29 = ~19 days."
+    },
+    {
+      "id": "slack-agent-builder-2026",
+      "name": "Slack Agent Builder Challenge",
+      "platform": "devpost",
+      "url": "https://slackhack.devpost.com/",
+      "rules_url": "https://slackhack.devpost.com/rules",
+      "deadline": "2026-07-13T17:00:00-07:00",
+      "deadline_timezone": "America/Los_Angeles",
+      "format": "online",
+      "prize_total_usd": 42000,
+      "cash_prize": true,
+      "prize_breakdown": "Per track (New Agent / Agent for Good / Agent for Organizations): 1st $8,000 + 2nd $4,000. Best UX $2,000; Most Innovative $2,000; Best Tech Implementation $2,000.",
+      "tracks": ["New Slack Agent", "Slack Agent for Good", "Slack Agent for Organizations"],
+      "sponsors": ["Slack", "Salesforce"],
+      "required_apis": ["At least one of: Slack AI capabilities / MCP server integration / Real-Time Search API"],
+      "judging_criteria": ["Technological Implementation", "Design", "Potential Impact", "Quality of the Idea"],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "taiwan_eligible": null,
+        "region_restricted": true,
+        "student_only": false,
+        "team_required": false,
+        "notes": "'Only specific countries/territories included' (allow-list). Taiwan inclusion NOT confirmed. VERIFY allow-list before committing. Age 18+."
+      },
+      "submission_requirements": {
+        "github_repo": false,
+        "demo_url": true,
+        "video": true,
+        "architecture_diagram": true,
+        "public_profile": true,
+        "notes": "Track selection; text description; ~3min demo video; architecture diagram; Slack sandbox URL access for slackhack@salesforce.com and testing@devpost.com."
+      },
+      "source_evidence": [
+        {"field": "deadline", "url": "https://slackhack.devpost.com/", "quote": "Deadline: Jul 13, 2026 @ 5:00pm PDT", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.95},
+        {"field": "prize_total_usd", "url": "https://slackhack.devpost.com/", "quote": "$42,000 in cash USD prize pool", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.9},
+        {"field": "required_apis", "url": "https://slackhack.devpost.com/", "quote": "Slack AI capabilities, MCP server integration, or Real-Time Search API", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.85},
+        {"field": "eligibility", "url": "https://slackhack.devpost.com/", "quote": "Only specific countries/territories included", "fetched_at": "2026-06-10T09:40:00+08:00", "confidence": 0.55}
+      ],
+      "status": "open",
+      "notes": "$42K cash, MCP-server path fits our edge well, 7/13 = ~33 days comfortable. RISK: allow-list eligibility -> Taiwan may be excluded. Human gate to verify allow-list."
+    },
+    {
+      "id": "build-with-gemini-xprize-2026",
+      "name": "Build with Gemini XPRIZE",
+      "platform": "devpost",
+      "url": "https://xprize.devpost.com/",
+      "rules_url": "https://xprize.devpost.com/rules",
+      "deadline": "2026-08-17T13:00:00-07:00",
+      "deadline_timezone": "America/Los_Angeles",
+      "format": "online",
+      "prize_total_usd": 2000000,
+      "cash_prize": true,
+      "prize_breakdown": "$2,000,000 cash (per Codex extended radar; breakdown unverified).",
+      "tracks": [],
+      "sponsors": ["Google", "Gemini", "XPRIZE"],
+      "required_apis": ["Google Gemini (implied)"],
+      "judging_criteria": ["Unknown - verify"],
+      "ai_policy": "allowed",
+      "eligibility": {
+        "taiwan_eligible": null,
+        "region_restricted": null,
+        "notes": "Requires real users / revenue traction per extended radar -> high bar, not a weekend sprint. Verify rules."
+      },
+      "submission_requirements": {"notes": "Unverified - fetch detail page before use."},
+      "source_evidence": [
+        {"field": "deadline", "url": "https://xprize.devpost.com/", "quote": "2026-08-17 13:00 PDT (per Codex extended radar, not yet directly verified)", "fetched_at": "2026-06-10T04:07:00+08:00", "confidence": 0.4},
+        {"field": "prize_total_usd", "url": "https://xprize.devpost.com/", "quote": "$2,000,000 cash; requires real users/revenue (extended radar)", "fetched_at": "2026-06-10T04:07:00+08:00", "confidence": 0.4}
+      ],
+      "status": "open",
+      "notes": "LOW EVIDENCE + high feasibility bar (real users/revenue). Massive prize but not a sprint-buildable target. Watchlist; verify before considering."
+    }
+  ],
+  "expired_for_review": [
+    {"id": "agents-assemble-healthcare", "name": "Agents Assemble - Healthcare AI", "deadline": "2026-05-11", "status": "closed", "note": "From round-1 search; now closed."},
+    {"id": "zervehack", "name": "ZerveHack", "deadline": "2026-04-29", "status": "closed", "note": "Round-1 target (PredictPulse). Closed."},
+    {"id": "agents-league-microsoft", "name": "Agents League Hackathon (Microsoft)", "deadline": "2026-06-14", "status": "closing", "note": "Registration closed Jun 12; build ends Jun 14 -> under 7-day buffer, excluded from active."}
+  ]
+}

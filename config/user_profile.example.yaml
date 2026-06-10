@@ -1,0 +1,14 @@
+country: "Taiwan"
+location: "Taiwan"
+preferred_formats:
+  - online
+  - hybrid
+domains:
+  - ai agents
+  - voice ai
+  - cloud
+  - developer tools
+constraints:
+  min_deadline_buffer_days: 7
+  avoid_onsite_only: true
+fast_lane_mode: false

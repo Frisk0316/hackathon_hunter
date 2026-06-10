@@ -1,0 +1,17 @@
+weights:
+  prize_cash: 0.11
+  online_allowed: 0.09
+  deadline_buffer: 0.10
+  ai_policy_clear: 0.10
+  sponsor_api_fit: 0.11
+  past_winner_analyzable: 0.05
+  low_submission_estimate: 0.03
+  user_domain_fit: 0.07
+  taiwan_eligibility_gate: 0.14
+  competition_pressure_score: 0.07
+  submission_complexity_score: 0.08
+  fast_lane_mode: 0.05
+
+minimum_evidence_confidence: 0.7
+active_buffer_days: 7
+fast_lane_active_buffer_days: 1

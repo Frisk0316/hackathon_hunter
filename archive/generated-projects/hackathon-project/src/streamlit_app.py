@@ -179,11 +179,24 @@ def train_model(df, feature_cols, n_bins=8):
     from sklearn.linear_model import LogisticRegression
     from sklearn.preprocessing import StandardScaler
     from sklearn.pipeline import Pipeline
-    from sklearn.metrics import roc_auc_score, average_precision_score, brier_score_loss
+    from sklearn.metrics import (roc_auc_score, average_precision_score, brier_score_loss,
+                                  precision_score, recall_score, f1_score)
     from sklearn.calibration import calibration_curve
+    from sklearn.inspection import permutation_importance as sk_perm_importance
 
-    X = df[feature_cols].fillna(0).values
-    y = df["prediction_accurate"].values
+    # ── Temporal train/test split (80/20 by resolve_time) ──
+    df_sorted = df.sort_values("resolve_time").reset_index(drop=True)
+    split_idx = int(len(df_sorted) * 0.8)
+    df_train = df_sorted.iloc[:split_idx]
+    df_test  = df_sorted.iloc[split_idx:]
+
+    X_train = df_train[feature_cols].fillna(0).values
+    y_train = df_train["prediction_accurate"].values
+    X_test  = df_test[feature_cols].fillna(0).values
+    y_test  = df_test["prediction_accurate"].values
+    X_all   = df_sorted[feature_cols].fillna(0).values
+    y_all   = df_sorted["prediction_accurate"].values
+
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     candidates = {
@@ -195,20 +208,44 @@ def train_model(df, feature_cols, n_bins=8):
                                                            learning_rate=0.1,
                                                            min_samples_leaf=10, random_state=42),
     }
-    cv_scores = {name: cross_val_score(m, X, y, cv=cv, scoring="roc_auc").mean()
+    # CV on training set only
+    cv_scores = {name: cross_val_score(m, X_train, y_train, cv=cv, scoring="roc_auc").mean()
                  for name, m in candidates.items()}
     best_name = max(cv_scores, key=cv_scores.get)
     model = candidates[best_name]
-    model.fit(X, y)
-    y_proba = model.predict_proba(X)[:, 1]
+    model.fit(X_train, y_train)
 
-    cv_proba = cross_val_predict(model, X, y, cv=cv, method="predict_proba")[:, 1]
-    frac_pos, mean_pred = calibration_curve(y, cv_proba, n_bins=n_bins, strategy="quantile")
+    # ── Test-set evaluation ──
+    y_test_proba = model.predict_proba(X_test)[:, 1]
+    y_test_pred  = (y_test_proba > 0.5).astype(int)
+    test_brier   = brier_score_loss(y_test, y_test_proba)
+    # Baseline: always use community_prediction as forecast
+    baseline_proba = df_test["community_pred"].values
+    baseline_brier = brier_score_loss(y_test, baseline_proba)
+    baseline_auc   = roc_auc_score(y_test, baseline_proba)
+    test_metrics = {
+        "auc":           float(roc_auc_score(y_test, y_test_proba)),
+        "brier":         float(test_brier),
+        "brier_skill":   float(1 - test_brier / max(baseline_brier, 1e-9)),
+        "precision":     float(precision_score(y_test, y_test_pred, zero_division=0)),
+        "recall":        float(recall_score(y_test, y_test_pred, zero_division=0)),
+        "f1":            float(f1_score(y_test, y_test_pred, zero_division=0)),
+        "n_test":        len(y_test),
+        "baseline_brier": float(baseline_brier),
+        "baseline_auc":  float(baseline_auc),
+    }
+
+    # ── Calibration on full dataset ──
+    model.fit(X_all, y_all)   # refit on all data for production
+    y_proba = model.predict_proba(X_all)[:, 1]
+    cv_proba = cross_val_predict(model, X_all, y_all, cv=cv, method="predict_proba")[:, 1]
+    frac_pos, mean_pred = calibration_curve(y_all, cv_proba, n_bins=n_bins, strategy="quantile")
     cal_df = pd.DataFrame({"mean_pred": mean_pred, "frac_pos": frac_pos})
 
-    brier = brier_score_loss(y, y_proba)
-    brier_skill = 1 - brier / (y.mean() * (1 - y.mean()))
+    brier = brier_score_loss(y_all, y_proba)
+    brier_skill = 1 - brier / (y_all.mean() * (1 - y_all.mean()))
 
+    # ── Feature importance ──
     if hasattr(model, "feature_importances_"):
         imps = model.feature_importances_
     elif hasattr(model, "named_steps"):
@@ -219,7 +256,37 @@ def train_model(df, feature_cols, n_bins=8):
     importance_df = pd.DataFrame({"feature": feature_cols, "importance": imps}).sort_values(
         "importance", ascending=False)
 
-    df_eval = df.copy()
+    # ── Permutation importance on test set (ablation proxy) ──
+    try:
+        perm = sk_perm_importance(model, X_test, y_test, n_repeats=5,
+                                  random_state=42, scoring="roc_auc")
+        perm_df = pd.DataFrame({
+            "feature": feature_cols,
+            "auc_drop_mean": perm.importances_mean,
+            "auc_drop_std":  perm.importances_std,
+        }).sort_values("auc_drop_mean", ascending=False)
+    except Exception:
+        perm_df = importance_df[["feature"]].copy()
+        perm_df["auc_drop_mean"] = imps
+        perm_df["auc_drop_std"]  = 0.0
+
+    # ── SHAP values (tree-based models only) ──
+    shap_df = None
+    try:
+        import shap as _shap
+        if hasattr(model, "feature_importances_"):
+            _explainer  = _shap.TreeExplainer(model)
+            _n          = min(300, len(X_train))
+            _shap_vals  = _explainer.shap_values(X_train[:_n])
+            # For binary classifiers shap_values may be [neg, pos] list
+            if isinstance(_shap_vals, list):
+                _shap_vals = _shap_vals[1]
+            shap_df = pd.DataFrame(_shap_vals, columns=feature_cols)
+    except Exception:
+        pass
+
+    # ── Category stats ──
+    df_eval = df_sorted.copy()
     df_eval["proba"] = y_proba
     cat_stats = {}
     for cat, grp in df_eval.groupby("category_clean", observed=True):
@@ -233,11 +300,15 @@ def train_model(df, feature_cols, n_bins=8):
 
     return model, {
         "best_model": best_name, "cv_auc": cv_scores,
-        "auc_roc": float(roc_auc_score(y, y_proba)),
-        "avg_precision": float(average_precision_score(y, y_proba)),
+        "auc_roc": float(roc_auc_score(y_all, y_proba)),
+        "avg_precision": float(average_precision_score(y_all, y_proba)),
         "brier_score": float(brier), "brier_skill": float(brier_skill),
         "calibration_df": cal_df, "category_stats": cat_stats,
-        "n_train": len(X), "n_features": len(feature_cols),
+        "n_train": len(X_train), "n_features": len(feature_cols),
+        "test_metrics": test_metrics,
+        "perm_df": perm_df,
+        "shap_df": shap_df,
+        "feature_cols": feature_cols,
     }, importance_df
 
 
@@ -369,8 +440,9 @@ st.divider()
 
 
 # ── Tabs ──────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs([
-    "📊 Dashboard", "🔬 Model Analysis", "🏆 Reliability Scores", "🔮 Score a Prediction"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "📊 Dashboard", "🔬 Model Analysis", "🏆 Reliability Scores",
+    "🔮 Score a Prediction", "🧠 Explainability"])
 
 
 # ──── Tab 1: Dashboard ────────────────────────────────────────
@@ -474,16 +546,34 @@ with tab2:
                            margin=dict(t=20, b=40))
         st.plotly_chart(fig5, use_container_width=True)
 
-        st.subheader("Key Findings")
-        st.markdown(f"""
+        st.subheader("Train / Test / Baseline Comparison")
+        tm = metrics.get("test_metrics", {})
+        if tm:
+            st.markdown(f"""
+| Metric | CV (Train) | **Test Set** | Baseline (Community) |
+|--------|-----------|------------|----------------------|
+| AUC-ROC | {max(metrics['cv_auc'].values()):.3f} | **{tm['auc']:.3f}** | {tm['baseline_auc']:.3f} |
+| Brier Score | {metrics['brier_score']:.4f} | **{tm['brier']:.4f}** | {tm['baseline_brier']:.4f} |
+| Brier Skill | {metrics['brier_skill']:.3f} | **{tm['brier_skill']:.3f}** | 0.000 |
+| Precision | — | **{tm['precision']:.3f}** | — |
+| Recall | — | **{tm['recall']:.3f}** | — |
+| F1 Score | — | **{tm['f1']:.3f}** | — |
+| Samples | {metrics['n_train']:,} | **{tm['n_test']:,}** | {tm['n_test']:,} |
+""")
+            improvement = (tm['baseline_brier'] - tm['brier']) / tm['baseline_brier'] * 100
+            st.success(
+                f"✅ **PredictPulse vs Baseline:** Brier Score improved by "
+                f"**{improvement:.1f}%** over naive community-prediction baseline "
+                f"({tm['baseline_brier']:.4f} → {tm['brier']:.4f}) on held-out test set."
+            )
+        else:
+            st.markdown(f"""
 | Metric | Value |
 |--------|-------|
 | Best CV AUC-ROC | **{max(metrics['cv_auc'].values()):.3f}** |
 | Brier Score | **{metrics['brier_score']:.4f}** |
 | Brier Skill | **{metrics['brier_skill']:.3f}** |
 | Avg Precision | **{metrics['avg_precision']:.3f}** |
-| Training Samples | **{metrics['n_train']:,}** |
-| Features Used | **{metrics['n_features']}** |
 """)
         st.info("💡 **Top insight:** Community confidence (`pred_confidence`) is the strongest "
                 "predictor — predictions near 50% are harder to score than those with strong consensus.")
@@ -607,6 +697,119 @@ with tab4:
             analysis = get_ai_analysis(pred_title, score, community_p, n_forecasters, cat)
         st.subheader("AI Analysis")
         st.markdown(analysis)
+
+        # ── SHAP waterfall for this prediction ──
+        shap_df_local = metrics.get("shap_df")
+        if shap_df_local is not None:
+            st.subheader("Feature Contribution Breakdown")
+            st.caption("How each input feature pushed this prediction's reliability score up or down.")
+            try:
+                import shap as _shap
+                if hasattr(model, "feature_importances_"):
+                    _exp = _shap.TreeExplainer(model)
+                    _sv  = _exp.shap_values(row[feature_cols].fillna(0).values)
+                    if isinstance(_sv, list):
+                        _sv = _sv[1]
+                    _sv = _sv[0]
+                    contrib_df = pd.DataFrame({"feature": feature_cols, "shap": _sv})
+                    contrib_df["label"] = contrib_df["feature"].str.replace("_", " ").str.title()
+                    contrib_df = contrib_df.reindex(contrib_df["shap"].abs().sort_values(ascending=False).index)
+                    contrib_df = contrib_df.head(12).sort_values("shap")
+                    colors = ["#22c55e" if v > 0 else "#ef4444" for v in contrib_df["shap"]]
+                    fig_wf = go.Figure(go.Bar(
+                        x=contrib_df["shap"], y=contrib_df["label"],
+                        orientation="h", marker_color=colors,
+                        text=contrib_df["shap"].round(4), textposition="outside",
+                    ))
+                    fig_wf.add_vline(x=0, line_dash="dash", line_color="#94a3b8")
+                    fig_wf.update_layout(height=380, template="plotly_white",
+                                         margin=dict(l=200, r=80, t=20, b=20),
+                                         xaxis_title="SHAP Value (green = increases reliability)")
+                    st.plotly_chart(fig_wf, use_container_width=True)
+            except Exception:
+                pass
+
+
+# ──── Tab 5: Explainability ───────────────────────────────────
+with tab5:
+    st.subheader("🧠 Model Explainability")
+
+    shap_df = metrics.get("shap_df")
+    perm_df = metrics.get("perm_df")
+    feature_cols_m = metrics.get("feature_cols", feature_cols)
+
+    # ── SHAP Global Importance ──
+    if shap_df is not None:
+        st.markdown("#### SHAP Feature Importance (Mean |SHAP|)")
+        st.caption("Unlike tree impurity importance, SHAP values are based on actual prediction contributions — more reliable and model-agnostic.")
+        shap_mean = shap_df.abs().mean().sort_values(ascending=False).head(15)
+        shap_mean_df = shap_mean.reset_index()
+        shap_mean_df.columns = ["feature", "mean_shap"]
+        shap_mean_df["feature_label"] = shap_mean_df["feature"].str.replace("_", " ").str.title()
+
+        fig_shap = go.Figure(go.Bar(
+            x=shap_mean_df["mean_shap"],
+            y=shap_mean_df["feature_label"],
+            orientation="h",
+            marker=dict(color=shap_mean_df["mean_shap"], colorscale="Purples"),
+            text=shap_mean_df["mean_shap"].round(4), textposition="outside",
+        ))
+        fig_shap.update_layout(height=440, margin=dict(l=200, r=60, t=20, b=20),
+                               template="plotly_white", xaxis_title="Mean |SHAP Value|")
+        st.plotly_chart(fig_shap, use_container_width=True)
+
+        # SHAP beeswarm as scatter
+        st.markdown("#### SHAP Value Distribution (Top 8 Features)")
+        st.caption("Each dot is one training sample. Right = pushed prediction higher (reliable), Left = pushed lower (unreliable). Color = feature value (red = high, blue = low).")
+        top8 = shap_mean_df["feature"].head(8).tolist()
+        rows = []
+        for feat in top8:
+            if feat in shap_df.columns:
+                for sv in shap_df[feat].values:
+                    rows.append({"feature": feat.replace("_", " ").title(), "shap": sv})
+        if rows:
+            bee_df = pd.DataFrame(rows)
+            fig_bee = px.strip(bee_df, x="shap", y="feature", color="shap",
+                               color_continuous_scale="RdBu_r",
+                               labels={"shap": "SHAP Value", "feature": ""})
+            fig_bee.update_traces(jitter=0.4, marker=dict(size=4, opacity=0.5))
+            fig_bee.add_vline(x=0, line_dash="dash", line_color="#94a3b8")
+            fig_bee.update_layout(height=380, template="plotly_white",
+                                  margin=dict(t=20, b=40, l=180, r=40),
+                                  coloraxis_showscale=False)
+            st.plotly_chart(fig_bee, use_container_width=True)
+    else:
+        st.info("SHAP analysis requires a tree-based model (Random Forest or Gradient Boosting). "
+                "Logistic Regression was selected this run — adjust Training data size to trigger a different model.")
+
+    st.divider()
+
+    # ── Permutation Importance / Ablation ──
+    if perm_df is not None:
+        st.markdown("#### Permutation Importance (Ablation Study)")
+        st.caption("AUC drop when each feature is randomly shuffled on the held-out test set. "
+                   "Larger drop = feature is critical. Error bars = std across 5 permutations.")
+        top_perm = perm_df.head(12).sort_values("auc_drop_mean")
+        fig_perm = go.Figure(go.Bar(
+            x=top_perm["auc_drop_mean"],
+            y=top_perm["feature"].str.replace("_", " ").str.title(),
+            orientation="h",
+            error_x=dict(type="data", array=top_perm["auc_drop_std"].tolist(), visible=True),
+            marker=dict(color=top_perm["auc_drop_mean"], colorscale="Oranges"),
+            text=top_perm["auc_drop_mean"].round(4), textposition="outside",
+        ))
+        fig_perm.update_layout(height=400, margin=dict(l=200, r=80, t=20, b=20),
+                               template="plotly_white", xaxis_title="AUC Drop (higher = more critical)")
+        st.plotly_chart(fig_perm, use_container_width=True)
+
+        top3 = perm_df.head(3)
+        st.info(
+            f"**Key finding:** Removing **{top3.iloc[0]['feature'].replace('_',' ').title()}** "
+            f"drops AUC by **{top3.iloc[0]['auc_drop_mean']:.4f}** — "
+            f"{top3.iloc[0]['auc_drop_mean'] / max(top3.iloc[2]['auc_drop_mean'], 1e-6):.1f}× "
+            f"more impactful than **{top3.iloc[2]['feature'].replace('_',' ').title()}** "
+            f"({top3.iloc[2]['auc_drop_mean']:.4f})."
+        )
 
 
 # ── Footer ────────────────────────────────────────────────────
