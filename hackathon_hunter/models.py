@@ -214,4 +214,7 @@ class ResultRecord(BaseModel):
     outcome: Literal["submitted", "finalist", "winner", "rejected", "abandoned"]
     what_worked: list[str] = Field(default_factory=list)
     what_failed: list[str] = Field(default_factory=list)
+    notes: str | None = None
+    score_trace: dict[str, float] = Field(default_factory=dict)
+    overall_score: float | None = Field(default=None, ge=0.0, le=1.0)
     scoring_adjustments: dict[str, Any] = Field(default_factory=dict)

@@ -30,6 +30,8 @@ hackathon-hunter build-spec --hackathon-id mock-hackathon-001 --idea-id idea-001
 hackathon-hunter watch --input data/processed/mock_hackathons.json
 hackathon-hunter status --input data/processed/mock_hackathons.json
 hackathon-hunter qa --project projects/mock-hackathon-001/idea-001
+hackathon-hunter record-result --hackathon-id mock-hackathon-001 --outcome submitted --what-worked "clear sponsor API usage" --what-failed "demo video ran long"
+hackathon-hunter calibrate
 ```
 
 Import the next evidence-backed radar from Claude with the schema gate:

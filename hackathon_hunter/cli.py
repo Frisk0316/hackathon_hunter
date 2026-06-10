@@ -7,6 +7,7 @@ from rich.table import Table
 from hackathon_hunter.runlog import run_logged
 from hackathon_hunter.workflows.analyze_winners import run_analyze_winners
 from hackathon_hunter.workflows.build_spec import run_build_spec
+from hackathon_hunter.workflows.calibrate import run_calibrate
 from hackathon_hunter.workflows.collect import CollectError, run_collect
 from hackathon_hunter.workflows.ideate import run_ideate
 from hackathon_hunter.workflows.import_hackathons import ImportValidationError, run_import
@@ -236,6 +237,28 @@ def qa(project: Path = typer.Option(..., "--project", exists=True, file_okay=Fal
     console.print(f"submission_package: {outputs['submission_package']}")
 
 
+@app.command()
+def calibrate(
+    results_dir: Path | None = typer.Option(None, "--results-dir", file_okay=False),
+    weights: Path | None = typer.Option(None, "--weights", exists=True, file_okay=True),
+) -> None:
+    """Suggest scoring-weight adjustments from recorded outcomes."""
+    with run_logged(
+        "calibrate",
+        {"results_dir": results_dir, "weights": weights},
+    ) as run_log:
+        result = run_calibrate(results_dir=results_dir, weights_path=weights)
+        run_log.set_outputs(
+            report=result.report_path,
+            records_read=result.records_read,
+            records_used=result.records_used,
+            suggestions=len(result.suggestions),
+        )
+    console.print(f"report: {result.report_path}")
+    console.print(f"records_read: {result.records_read}")
+    console.print(f"suggestions: {len(result.suggestions)}")
+
+
 @app.command("record-result")
 def record_result(
     hackathon_id: str = typer.Option(..., "--hackathon-id"),
@@ -244,6 +267,10 @@ def record_result(
     hours_spent: float | None = typer.Option(None, "--hours-spent"),
     api_cost_usd: float | None = typer.Option(None, "--api-cost-usd"),
     infra_cost_usd: float | None = typer.Option(None, "--infra-cost-usd"),
+    what_worked: list[str] | None = typer.Option(None, "--what-worked"),
+    what_failed: list[str] | None = typer.Option(None, "--what-failed"),
+    notes: str | None = typer.Option(None, "--notes"),
+    input: Path | None = typer.Option(None, "--input", exists=True, file_okay=True),
 ) -> None:
     """Record an outcome and produce a retrospective stub."""
     with run_logged(
@@ -255,6 +282,10 @@ def record_result(
             "hours_spent": hours_spent,
             "api_cost_usd": api_cost_usd,
             "infra_cost_usd": infra_cost_usd,
+            "what_worked": what_worked,
+            "what_failed": what_failed,
+            "notes": notes,
+            "input": input,
         },
     ) as run_log:
         outputs = run_record_result(
@@ -264,6 +295,10 @@ def record_result(
             hours_spent=hours_spent,
             api_cost_usd=api_cost_usd,
             infra_cost_usd=infra_cost_usd,
+            what_worked=what_worked,
+            what_failed=what_failed,
+            notes=notes,
+            input_path=input,
         )
         run_log.set_outputs(**outputs)
     for label, path in outputs.items():
