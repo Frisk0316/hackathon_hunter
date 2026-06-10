@@ -152,6 +152,12 @@ Tagline: {idea.tagline}
 - Demo: pending human publication
 - Video: pending human recording
 
+## Data Disclosure
+
+The initial scaffold may use demo or synthetic fallback data when live API
+access is unavailable. The final submission must disclose any synthetic data
+used in the demo, screenshots, or video.
+
 ## Required Human Gate
 
 Do not submit this draft automatically. Final submission requires manual review
