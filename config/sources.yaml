@@ -1,0 +1,7 @@
+sources:
+  mock:
+    enabled: true
+    description: "Deterministic offline fixture source for tests and CI."
+  web_search:
+    enabled: false
+    description: "Placeholder for future evidence-backed web search collection."

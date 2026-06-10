@@ -1,0 +1,14 @@
+# Workflow
+
+1. Collect evidence-backed hackathon candidates.
+2. Normalize and deduplicate records.
+3. Check freshness and close expired candidates.
+4. Check rules and eligibility.
+5. Rank candidates with traceable scores.
+6. Analyze winner context.
+7. Generate multiple project ideas.
+8. Pause for human idea selection.
+9. Build project specs and coding-agent briefs.
+10. Run QA and produce submission drafts.
+11. Pause for final human submission approval.
+12. Record outcomes and update future scoring.
