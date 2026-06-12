@@ -1,4 +1,13 @@
+---
+title: Legacy Safety And Compliance Note
+owner: human
+status: legacy
+last_updated: 2026-06-12
+---
+
 # Safety And Compliance
+
+Canonical safety rules are now in `docs/DOMAIN_RULES.md` and `docs/INVARIANTS.md`. This file is retained as the original short note.
 
 Hackathon Hunter is a planning system. It must never represent that the user accepted rules, posted on social media, or submitted a final entry unless the user explicitly performs that action.
 

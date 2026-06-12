@@ -1,4 +1,13 @@
+---
+title: Legacy Workflow Note
+owner: human
+status: legacy
+last_updated: 2026-06-12
+---
+
 # Workflow
+
+Canonical workflow and run commands are now in `docs/DATA_FLOW.md` and `docs/RUNBOOK.md`. This file is retained as the original short note.
 
 1. Collect evidence-backed hackathon candidates.
 2. Normalize and deduplicate records.

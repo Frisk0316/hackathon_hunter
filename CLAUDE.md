@@ -5,6 +5,24 @@
 
 ---
 
+## AI-Native Harness Rules
+
+Before following the legacy autopilot workflow below, load the current harness context:
+
+1. `AI_CONTEXT.md`
+2. `docs/CURRENT_STATE.md`
+3. `docs/CONTEXT_INDEX.md`
+4. `docs/ARCHITECTURE.md`
+5. `docs/FEATURE_MAP.md`
+6. `docs/RUNBOOK.md`
+7. Relevant `docs/CONTEXT_PACKS/*.md`
+
+Then run `git status --short`.
+
+This repo is not allowed to auto-submit hackathon entries. Registration, idea selection, public repo/demo publication, social posting, and final submission are human gates. Unknown AI policy blocks build-stage work. Any change to scoring, evidence freshness, eligibility, CLI contracts, generated-project behavior, or run-log behavior must consult `docs/DOC_IMPACT_MATRIX.md` and update impacted docs.
+
+---
+
 ## 系統總覽
 
 你是一個自動化黑客松專案生成系統。你的工作是：

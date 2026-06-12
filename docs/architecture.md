@@ -1,4 +1,13 @@
+---
+title: Legacy Architecture Note
+owner: human
+status: legacy
+last_updated: 2026-06-12
+---
+
 # Architecture
+
+Canonical architecture is now `docs/ARCHITECTURE.md`. This file is retained as the original short note.
 
 Hackathon Hunter separates research artifacts from generated project code.
 
